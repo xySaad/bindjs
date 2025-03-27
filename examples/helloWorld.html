@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <app></app>
+    <script type="module">
+      import { div, q, a } from "../src/index.js";
+      {
+        const parent = div("parent");
+        parent.append(
+          div("some class", "hello world!"),
+          a("#", div("still class", "click!"))
+        );
+
+        q("app").append(parent);
+      }
+    </script>
+
+    <script>
+      // the previous code would be equivilant to:
+      {
+        const parent = document.createElement("div");
+        parent.className = "parent";
+
+        const someDiv = document.createElement("div");
+        someDiv.className = "some class";
+        someDiv.textContent = "hello world!";
+
+        const a = document.createElement("a");
+        a.href = "#";
+        
+        const clickDiv = document.createElement("div");
+        clickDiv.className = "still class";
+        clickDiv.textContent = "click!";
+
+        a.append(clickDiv);
+        parent.append(someDiv, a);
+        document.querySelector("app").append(parent);
+      }
+    </script>
+  </body>
+</html>
