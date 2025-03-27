@@ -2,8 +2,13 @@ export const q = (selector) => document.querySelector(selector);
 
 export const ce = (tagName, className, textContent) => {
   const element = document.createElement(tagName);
-  element.className = className ?? "";
-  element.textContent = textContent ?? "";
+  element.append = function (...children) {
+    Element.prototype.append.call(this, ...children);
+    return this;
+  };
+
+  if (className) element.className = className;
+  if (textContent) element.textContent = textContent;
   return element;
 };
 
