@@ -21,3 +21,15 @@ export const a = (href, child) => {
   aElement.append(child);
   return aElement;
 };
+
+export const select = (className, name) => {
+  const selectElement = ce("select", className);
+  if (name) selectElement.name = name;
+  return selectElement;
+};
+
+export const option = (value, text, className) => {
+  const optionElement = ce("option", className , text);
+  optionElement.value = value;
+  return optionElement;
+};
