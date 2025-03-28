@@ -1,2 +1,2 @@
 # bindjs
-A lightwieght library for reactive websites
+A lightweight library for reactive websites
