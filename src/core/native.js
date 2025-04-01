@@ -1,10 +1,12 @@
 import { isReference } from "./reference.js";
+import { isConditionalElement } from "./states.js";
 export const _ = null;
 
 const append = function (...children) {
-  for (const child of children) {    
-    Element.prototype.append.call(this.active, child.active);
-  }
+  for (const child of children) {
+    const toAppend = isConditionalElement(child) ? child.getActive() : child
+    Element.prototype.append.call(this.active, toAppend.active);
+  }  
   return this;
 };
 
