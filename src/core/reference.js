@@ -1,6 +1,6 @@
 class Reference {}
 
-export const useReference = (defaultValue) => {
+export const useReference = (defaultValue, name) => {
   let value = defaultValue;
   const triggers = new Set();
 
@@ -15,15 +15,18 @@ export const useReference = (defaultValue) => {
     }
 
     for (const trigger of triggers) {
+      // console.log(value);
       trigger(value);
     }
-    
+
     return this;
   };
-
+  //for debuggin
+  fn.VarName = name;
+  //
   fn.addTrigger = (trigger) => {
     triggers.add(trigger);
-    trigger(value)
+    trigger(value);
   };
 
   Object.setPrototypeOf(fn, Reference.prototype);

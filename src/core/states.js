@@ -12,6 +12,29 @@ export const useDependency = (dependency, resolver) => {
   return newRefernce;
 };
 
+class ConditionalElement {
+  getActive() {
+    let lastVisited = this;
+    let i = 0;
+    while (lastVisited.active?.active && i < 10) {
+      lastVisited = lastVisited.active;
+      i++;
+    }
+    return lastVisited;
+  }
+  setActive(value) {
+    let lastVisited = this;
+    let i = 0;
+    while (lastVisited.active?.active) {
+      lastVisited = lastVisited.active;
+      i++;
+    }
+    lastVisited.active = value;
+  }
+}
+export const isConditionalElement = (value) =>
+  value instanceof ConditionalElement;
+
 export const When = (reference, condition) => {
   const isTruthy = (v) => {
     if (condition !== undefined) {
@@ -21,36 +44,26 @@ export const When = (reference, condition) => {
         return condition === v;
       }
     }
-    return !!v;
+    return v;
   };
-
-  let element = {};
 
   return {
     show: (trueElement, falseElement) => {
+      const element = new ConditionalElement();
+      element.name = reference.VarName;
       reference.addTrigger((value) => {
-        const formatedLog = ["When", reference.VarName];
-        if (condition !== undefined) formatedLog.push(condition);
-        formatedLog.push(
-          "show:",
-          trueElement.active,
-          "\nelse:",
-          falseElement.active
-        );
+        const nextElement = isTruthy(value) ? trueElement : falseElement;
+        const toRender = isConditionalElement(nextElement)
+          ? nextElement.getActive()
+          : nextElement;
 
-        console.log(...formatedLog);
-        
-        if (isTruthy(value)) {
-          element.active?.replaceWith(trueElement.active);
-          element = trueElement;
-        } else {
-          element.active?.replaceWith(falseElement.active);
-          element= falseElement;
-        }
+        // console.log(element.getActive(), "=>", toRender.active);
 
-        console.log("active after change:", element.active);
+        element.getActive().active?.replaceWith(toRender.active);
+        element.active = nextElement;
         
       });
+
       return element;
     },
     do: (trueValue, falseValue) =>
@@ -63,10 +76,10 @@ export const When = (reference, condition) => {
       }),
   };
 };
+
 export const WhenFunctionBased = (reference) => {
   let element = {};
   return (resolver) => {
-    // console.log(resolver.toString());
     reference.addTrigger((value) => {
       const resolvedElement = resolver(value);
       element.active?.replaceWith(resolvedElement.active);
