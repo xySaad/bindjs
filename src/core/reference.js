@@ -1,7 +1,11 @@
+import { When } from "./conditional.js";
+import { ce } from "./native.js";
+
 class Reference {}
 
-export const useReference = (defaultValue, name) => {
-  let value = defaultValue;
+export const useReference = (defaultValue, _defaultFallBack) => {
+  const modifier = typeof defaultValue === "function" ? defaultValue : (v) => v;
+  let value = modifier(_defaultFallBack ?? defaultValue);
   const triggers = new Set();
 
   const fn = function (newValue) {
@@ -9,26 +13,25 @@ export const useReference = (defaultValue, name) => {
       return value;
     }
     if (typeof newValue === "function") {
-      value = newValue(value);
+      value = modifier(newValue(value));
     } else {
-      value = newValue;
+      value = modifier(newValue);
     }
 
     for (const trigger of triggers) {
-      // console.log(value);
       trigger(value);
     }
 
     return this;
   };
-  //for debuggin
-  fn.VarName = name;
-  //
+
   fn.addTrigger = (trigger) => {
     triggers.add(trigger);
-    trigger(value);
+    return trigger(value);
   };
-
+  fn.map = function (callback) {
+    return When(this, (v) => ce("bindjs-frag").add(...v.map(callback)));
+  };
   Object.setPrototypeOf(fn, Reference.prototype);
   return fn;
 };

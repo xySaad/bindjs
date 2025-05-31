@@ -8,15 +8,15 @@
   <body>
     <app></app>
     <script type="module">
-      import { div, q, a } from "../src/index.js";
+      import { div, query, a } from "../src/core/native.js";
       {
         const parent = div("parent");
         parent.append(
           div("some class", "hello world!"),
-          a("#", div("still class", "click!"))
+          a("#bind", div("still class", "click!"))
         );
 
-        q("app").append(parent);
+        query("app").append(parent);
       }
     </script>
 
@@ -31,7 +31,7 @@
         someDiv.textContent = "hello world!";
 
         const a = document.createElement("a");
-        a.href = "#";
+        a.href = "#vanilla";
         
         const clickDiv = document.createElement("div");
         clickDiv.className = "still class";

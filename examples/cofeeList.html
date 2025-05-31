@@ -21,7 +21,7 @@
   <body>
     <app></app>
     <script type="module">
-      import { div, q, a, ce, select, option } from "../src/core/native.js";
+      import { div, query, a, ce, select, option } from "../src/core/native.js";
       {
         const coffeeOptions = (...options) => {
           const coffeeContainer = div();
@@ -38,7 +38,7 @@
             coffeeList.innerHTML = "";
             for (const coffee of coffeeData) {
               coffeeList.append(
-                div("coffee").append(
+                div("coffee").add(
                   div("title", coffee.title),
                   div("desc", coffee.description)
                 )
@@ -46,14 +46,14 @@
             }
           };
 
-          return coffeeContainer.append(
-            selectElement.append(...options),
+          return coffeeContainer.add(
+            selectElement.add(...options),
             coffeeList
           );
         };
 
-        q("app").append(
-          div("parent").append(
+        query("app").append(
+          div("parent").add(
             div("some class", "hello world!"),
             coffeeOptions(
               option("", "Please choose coffee type"),
