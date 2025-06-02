@@ -103,7 +103,7 @@ The issue? `Element.append()` returns `undefined`, so you can’t chain it. The 
 
 ---
 
-### ✅ The Fix
+### Making .append() Chainable with .add()
 
 ```diff
 export const ce = (tagName, className, textContent) => {
