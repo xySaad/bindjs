@@ -28,3 +28,4 @@ query("body").append(
     )
 )
 ```
+📘 [BindJS Journey](./docs/BINDJS-JOURNEY.md)
