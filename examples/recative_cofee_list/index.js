@@ -1,3 +1,4 @@
+import { When } from "../../src/core/conditional.js";
 import { div, query, select, option } from "../../src/core/native.js";
 import { useReference } from "../../src/core/reference.js";
 
@@ -13,14 +14,19 @@ const coffeeOptions = (...options) => {
 
   return div("container").add(
     select("", { onchange: handleListChange }).add(...options),
-    coffeeData.map((coffee) =>
-      div("coffee").add(
-        div("title", coffee.title),
-        div("desc", coffee.description)
-      )
-    )
+    When(coffeeData, (v) => {
+      const coffee = v[0]
+      return div("coffee").add(
+        div("title", coffee?.title),
+        div("desc", coffee?.description)
+      );
+    })
   );
 };
+
+// coffeeData.map((coffee) =>
+//   div("coffee").add(div("title", coffee.title), div("desc", coffee.description))
+// );
 
 query("app").append(
   div("parent").add(

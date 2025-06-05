@@ -14,8 +14,7 @@ export const When = (reference, resolver) => {
         console.log("appending:", resolvedElement.childNodes);
         active.append(...resolvedElement.childNodes);
       } else {
-        console.log("resolved elm", resolvedElement);
-        
+        console.log("resolved elm", resolvedElement);        
         active.appendChild(resolvedElement);
       }
     } else {

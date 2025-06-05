@@ -1,5 +1,5 @@
 import { When } from "./conditional.js";
-import { ce } from "./native.js";
+import { ce } from "../html/native.js";
 
 class Reference {}
 

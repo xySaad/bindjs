@@ -118,13 +118,13 @@ export const ce = (tagName, className, textContent) => {
 };
 ```
 
-> 🔸 Now, you can create nested, chainable elements. This makes building UI declarative and readable without needing JSX or frameworks.
+> Now, you can create nested, chainable elements. This makes building UI declarative and readable without needing JSX or frameworks.
 > 
 
 Here’s a working [example app](https://github.com/xySaad/bindjs/blob/main/examples/cofeeList.html) that demonstrates the approach.
 
 ---
 
-## Reactivity
+## Asyncrounous components
 
 First, we will …
