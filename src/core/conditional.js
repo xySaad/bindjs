@@ -3,28 +3,15 @@ export const eq = (comparable, result) => (reference) =>
   and(reference === comparable, result);
 
 export const When = (reference, resolver) => {
-  let element = {};
+  let active = null;
+
   reference.addTrigger(async (value) => {
-    const active = element.active;
     const resolvedElement = resolver(value);
-
-    if (active instanceof DocumentFragment) {
-      while (active.firstChild) active.removeChild(active.firstChild);
-      if (resolvedElement instanceof DocumentFragment) {
-        console.log("appending:", resolvedElement.childNodes);
-        active.append(...resolvedElement.childNodes);
-      } else {
-        console.log("resolved elm", resolvedElement);        
-        active.appendChild(resolvedElement);
-      }
-    } else {
-      active?.replaceWith(resolvedElement);
-    }
-
-    element.active = resolvedElement;
+    active?.replaceWith(resolvedElement);
+    active = resolvedElement;
   });
-  element.active = resolver(reference());
-  return element.active;
+  
+  return active;
 };
 
 export const toggle = (a, b) => {
