@@ -10,12 +10,12 @@ The code keeps growing and maintaining it becomes harder. Sure, you can split th
 
 ## Reduce Written Code
 
-So, I thought: *why not make wrappers for the functions I use the most?*
+So, I thought: _why not make wrappers for the functions I use the most?_
 
 ### Base wrapper:
 
 ```jsx
-export const ce = (tagName, className, textContent) => {
+export const createBindElement = (tagName, className, textContent) => {
   const element = document.createElement(tagName);
   element.className = className ?? "";
   element.textContent = textContent ?? "";
@@ -27,14 +27,14 @@ export const ce = (tagName, className, textContent) => {
 
 ```jsx
 export const div = (className, textContent) =>
-  ce("div", className, textContent);
+  createBindElement("div", className, textContent);
 ```
 
 ### And an anchor (`<a>`) helper:
 
 ```jsx
 export const a = (href, child) => {
-  const aElement = ce("a");
+  const aElement = createBindElement("a");
   aElement.href = href;
   aElement.append(child);
   return aElement;
@@ -83,30 +83,42 @@ Even with wrappers, It still not clean enough. Why should I assign `parent` to a
 ### Instead of this:
 
 ```jsx
-const parent = div("parent");
-parent.append(...);
-document.querySelector("app").append(parent);
+const app = document.querySelector("app");
+const container = div("container");
+
+const header = div("header");
+header.append(div("title", "Welcome"), div("desc", "This is a test."));
+
+const actions = div("actions");
+actions.append(button("btn", "Click me"));
+
+container.append(header, actions);
+app.append(container);
 ```
 
 ### I want this:
 
 ```jsx
-document.querySelector("app").append(
-    div("parent").add(
-      div("some class", "hello world!"),
-      a("#", div("still class", "click!"))
-    )
-  );
+const app = document.querySelector("app");
+app.append(
+  div("container").append(
+    div("header").append(
+      div("title", "Welcome"),
+      div("desc", "This is a test.")
+    ),
+    div("actions").append(button("btn", "Click me"))
+  )
+);
 ```
 
-The issue? `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `ce()`:
+The issue? `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `createBindElement`:
 
 ---
 
 ### Making .append() Chainable with .add()
 
 ```diff
-export const ce = (tagName, className, textContent) => {
+export const createBindElement = (tagName, className, textContent) => {
   const element = document.createElement(tagName);
   element.className = className ?? "";
   element.textContent = textContent ?? "";
@@ -118,13 +130,34 @@ export const ce = (tagName, className, textContent) => {
 };
 ```
 
-> Now, you can create nested, chainable elements. This makes building UI declarative and readable without needing JSX or frameworks.
-> 
+Now, you can create nested, chainable elements. This makes building UI declarative and readable without needing JSX or frameworks.
+Here’s a working [example app](/examples/coffeeList) that demonstrates the approach.
 
-Here’s a working [example app](https://github.com/xySaad/bindjs/blob/main/examples/cofeeList.html) that demonstrates the approach.
+> Note: elements are mounted from bottom to top, meaning the parent element won't be available on DOM until the last child is resolved, I will explain a way to fix this later in this documentation.
 
 ---
 
-## Asyncrounous components
+## Reactivity
 
-First, we will …
+First we will update the `createBindElement` function for better flexebilty
+
+```js
+export const createBindElement = (tagName, attributes = {}) => {
+  const element = document.createElement(tagName);
+  element.add = asyncAppend;
+  if (key in element) {
+    // attaching events and element properties
+    element[key] = value;
+  } else {
+    // normal attributes
+    element.setAttribute(key, value);
+  }
+  return element;
+};
+```
+
+See line 3 in [/src/html/native.js](/src/html/native.js) for the implementation of `asyncAppend`
+
+#### Binding variables to DOM elements
+
+There are several ways to bind a certain variable to an element or an attribute, ...
