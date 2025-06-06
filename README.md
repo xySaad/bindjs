@@ -4,12 +4,12 @@ bindjs is a lightweight library for building reactive websites, featuring a buil
 
 ### Usage
 ### creating elements:
-```js
+```ts
 import {ce} from "bindjs/native"
 ce(<tagName>, <attributes>)
 ```
 #### or
-```js
+```ts
 import html from "bindjs/native"
 const { div } = html
 
