@@ -1,4 +1,4 @@
-# bindjs - a library that shouldn't exists
+# bindjs - a library that shouldn't exist
 ### Introduction
 bindjs is a lightweight library for building reactive websites, featuring a built-in router, image/SVG caching, and a state management mechanism.
 
