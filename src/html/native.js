@@ -1,4 +1,4 @@
-import { isReference } from "../core/reference.js";
+import { Reference } from "../core/reference.js";
 
 const asyncAppend = function (...children) {
   (async () => {
@@ -24,7 +24,7 @@ export const query = (selector) => {
   return element;
 };
 
-const bindProto = {
+export const bindProto = {
   add(...children) {
     asyncAppend.apply(this, children);
     return this;
@@ -38,21 +38,15 @@ const bindProto = {
   },
 };
 
-export const ce = (tagName, attributes = {}) => {
+export const createBindElement = (tagName, attributes = {}) => {
   const element = document.createElement(tagName);
   Object.assign(element, bindProto);
   for (const [key, value] of Object.entries(attributes)) {
-    if (isReference(value)) {
+    if (value instanceof Reference) {
       value.addTrigger((v) => element.setAttr(key, v));
     } else {
       element.setAttr(key, value);
     }
   }
   return element;
-};
-
-export const a = (href, child) => {
-  const aElement = ce("a");
-  aElement.href = href;
-  return aElement.add(child);
 };
