@@ -17,9 +17,9 @@ export const useReference = (defaultValue, modifier = (v) => v) => {
     return this;
   };
 
-  fn.addTrigger = (trigger) => {
+  fn.addTrigger = (trigger, { invoke = true } = {}) => {
     triggers.add(trigger);
-    return trigger(value);
+    if (invoke) return trigger(value);
   };
 
   fn.map = function (callback) {

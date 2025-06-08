@@ -42,7 +42,35 @@ export const createBindElement = (tagName, attributes = {}) => {
   const element = document.createElement(tagName);
   Object.assign(element, bindProto);
   for (const [key, value] of Object.entries(attributes)) {
-    if (value instanceof Reference) {
+    if (Array.isArray(value)) {
+      const internalValue = [];
+      let scheduled = false;
+
+      const updateAttr = () => {
+        element.setAttr(key, internalValue.join(" "));
+        scheduled = false;
+      };
+
+      for (const [i, v] of value.entries()) {
+        if (v instanceof Reference) {
+          internalValue[i] = v();
+
+          v.addTrigger(
+            (newVal) => {
+              internalValue[i] = newVal;
+              if (!scheduled) {
+                scheduled = true;
+                queueMicrotask(updateAttr);
+              }
+            },
+            { invoke: false }
+          );
+        } else {
+          internalValue[i] = v;
+        }
+      }
+      element.setAttr(key, internalValue.join(" "));
+    } else if (value instanceof Reference) {
       value.addTrigger((v) => element.setAttr(key, v));
     } else {
       element.setAttr(key, value);
