@@ -31,7 +31,6 @@ export const useReference = (defaultValue, modifier = (v) => v) => {
     this.addTrigger((v) => {
       range.setStartAfter(commentStart);
       range.setEndBefore(commentEnd);
-      console.log(range.startContainer);
       range.deleteContents();
       const nodeList = v.map(callback);
       commentStart.after(...nodeList);
