@@ -37,6 +37,22 @@ export const useReference = (defaultValue, modifier = (v) => v) => {
     });
     return fragment;
   };
+  fn.every = function (callback) {
+    const ref = useReference();
+    this.addTrigger((v) => ref(v.every(callback)));
+    return ref;
+  };
+  fn.filterRef = function (callback) {
+    const ref = useReference();
+    this.addTrigger((v) => ref(v.filter(callback)));
+    return ref;
+  };
+  fn.len = function () {
+    const ref = useReference();
+    this.addTrigger((v) => ref(v.length));
+    return ref;
+  };
+
   Object.setPrototypeOf(fn, Reference.prototype);
   return fn;
 };

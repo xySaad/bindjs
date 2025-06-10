@@ -13,14 +13,40 @@ export const If = (reference, element) => {
 
   return active;
 };
+export const When = (effect) => {
+  const ctx = new Map();
+  const watch = (ref) => {
+    const px = new Proxy(ref, {
+      get(target, prop) {
+        const v = target()[prop];
+        ctx.get(ref)[prop] = v;
+        return v;
+      },
+    });
+    ctx.set(ref, {});
+    return px;
+  };
 
-export const When = (reference, resolver) => {
-  let active = null;
+  const initalValue = effect(watch);
+  let active = initalValue || document.createTextNode("");
+  const trigger = (props) => {
+    return (refValue) => {
+      const hasChanged = Object.entries(refValue).some(([key, value]) => {
+        if (props[key] !== value) {
+          props[key] = value;
+          return true;
+        }
+      });
 
-  reference.addTrigger(async (value) => {
-    const resolvedElement = resolver(value) || document.createTextNode("");
-    active?.replaceWith(resolvedElement);
-    active = resolvedElement;
+      if (!hasChanged) return;
+      const resolvedElement = effect((v) => v()) || document.createTextNode("");
+      active?.replaceWith(resolvedElement);
+      active = resolvedElement;
+    };
+  };
+
+  ctx.forEach((props, ref) => {
+    ref.addTrigger(trigger(props), { invoke: false });
   });
 
   return active;

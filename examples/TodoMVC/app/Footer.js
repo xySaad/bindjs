@@ -9,18 +9,17 @@ const { footer, span, strong, ul, div, button } = htmlElements;
 const isSelected = (path) => (location.pathname === path ? "selected" : "");
 
 export const Footer = () => {
-  return When(todos, (v) => {
-    const completed = v.filter((t) => !t.completed);
-
+  const completed = todos.filterRef((t) => !t.completed);
+  return When((w) => {
     return (
-      v.length > 0 &&
+      w(todos).length > 0 &&
       footer({ class: "footer" }).add(
         frag(
           span({ class: "todo-count" }).add(
             strong({
               textContent: [
-                completed.length,
-                completed.length === 1 ? "item" : "items",
+                completed.len(),
+                completed.len() === 1 ? "item" : "items",
                 "left!",
               ],
             })
@@ -32,9 +31,10 @@ export const Footer = () => {
           ),
           button({
             class: "clear-completed",
-            hidden: !v.some((t) => t.completed),
+            textContent: "Clear Completed",
+            hidden: todos.every((t) => !t.completed),
             onclick: deleteCompleted,
-          }).add("Clear Completed")
+          })
         )
       )
     );
