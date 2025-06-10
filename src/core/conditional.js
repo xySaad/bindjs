@@ -7,6 +7,7 @@ export const If = (reference, element) => {
 
   reference.addTrigger(async (value) => {
     const resolvedElement = value ? element : document.createTextNode("");
+    if (active === resolvedElement) return;
     active?.replaceWith(resolvedElement);
     active = resolvedElement;
   });

@@ -30,7 +30,7 @@ export const toggleAll = (value) => {
   todos((prev) => prev.map((t) => ({ ...t, completed: value })));
 };
 
-export const filterTodo = () => {
+export const getFilter = () => {
   switch (location.pathname) {
     case "/active":
       return (todo) => !todo.completed;
