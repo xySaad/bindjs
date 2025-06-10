@@ -9,7 +9,8 @@ const { footer, span, strong, ul, div, button } = htmlElements;
 const isSelected = (path) => (location.pathname === path ? "selected" : "");
 
 export const Footer = () => {
-  const completed = todos.filterRef((t) => !t.completed);
+  const active = todos.filterRef((t) => !t.completed);
+  
   return When((w) => {
     return (
       w(todos).length > 0 &&
@@ -18,8 +19,8 @@ export const Footer = () => {
           span({ class: "todo-count" }).add(
             strong({
               textContent: [
-                completed.len(),
-                completed.len() === 1 ? "item" : "items",
+                active.len(),
+                active.len() === 1 ? "item" : "items",
                 "left!",
               ],
             })
