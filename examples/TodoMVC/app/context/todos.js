@@ -6,7 +6,11 @@ export const todoType = {
   id: "",
 };
 
-export const todos = useReference([]);
+const saved = localStorage.getItem("todos");
+export const todos = useReference(saved ? JSON.parse(saved) : []);
+todos.addTrigger((val) => {
+  localStorage.setItem("todos", JSON.stringify(val));
+});
 
 export const addTodo = (value) => {
   const newTodo = {
