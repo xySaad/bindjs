@@ -32,8 +32,9 @@ export const When = (effect) => {
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
     return (refValue) => {
-      const hasChanged = Object.entries(refValue).some(([key, value]) => {
-        if (props[key] !== value) {
+      const hasChanged = Object.getOwnPropertyNames(refValue).some((key) => {
+        const value = refValue[key];
+        if (Object.hasOwn(props, key) && props[key] !== value) {
           props[key] = value;
           return true;
         }
