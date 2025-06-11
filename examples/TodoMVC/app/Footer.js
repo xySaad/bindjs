@@ -4,34 +4,33 @@ import { Link } from "../../../src/router/Link.js";
 import { deleteCompleted, todos } from "./context/todos.js";
 import { If, When } from "../../../src/core/conditional.js";
 
-const { footer, span, strong, ul, div, button } = htmlElements;
+const { footer, span, ul, button, li } = htmlElements;
 
 const isSelected = (path) => (location.pathname === path ? "selected" : "");
 
-export const Footer = () => {
+export const Footer = (filtred) => {
   const active = todos.filterRef((t) => !t.completed);
   return If(
     todos.len(),
     footer({ class: "footer" }).add(
       frag(
-        span({ class: "todo-count" }).add(
-          strong({
-            textContent: [
-              active.len(),
-              active.len() === 1 ? "item" : "items",
-              "left!",
-            ],
-          })
-        ),
+        When((w) => {
+          return span({
+            class: "todo-count",
+            textContent: `${w(active).length} ${
+              active().length === 1 ? "item" : "items"
+            } left!`,
+          });
+        }),
         ul({ class: "filters" }).add(
-          Link("/", "All", isSelected("/")),
-          Link("/active", "Active", isSelected("/active")),
-          Link("/completed", "Completed", isSelected("/completed"))
+          li().add(Link("/", "All", isSelected("/"))),
+          li().add(Link("/active", "Active", isSelected("/active"))),
+          li().add(Link("/completed", "Completed", isSelected("/completed")))
         ),
         button({
           class: "clear-completed",
           textContent: "Clear Completed",
-          hidden: todos.every((t) => !t.completed),
+          hidden: filtred.every((t) => !t.completed),
           onclick: deleteCompleted,
         })
       )

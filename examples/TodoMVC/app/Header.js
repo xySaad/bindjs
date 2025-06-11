@@ -1,5 +1,4 @@
 import html from "../../../src/html/index.js";
-import { Link } from "../../../src/router/Link.js";
 import { addTodo } from "./context/todos.js";
 const { input, h1, header } = html;
 
@@ -12,7 +11,7 @@ const keyEnter = (e) => {
 
 export const Header = () => {
   return header({ class: "header" }).add(
-    Link("/").add(h1({ textContent: "todos" })),
+    h1({ textContent: "todos" }),
     input({
       onkeyup: keyEnter,
       type: "text",

@@ -41,7 +41,6 @@ export const TodoItem = (todo) => {
         label({ textContent: todoText, ondblclick: () => editing(true) }),
         button({
           class: "destroy",
-          textContent: "X",
           onclick: () => deleteTodo(todo),
         })
       ),
