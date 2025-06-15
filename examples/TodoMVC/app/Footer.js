@@ -6,7 +6,12 @@ import { If, When } from "../../../src/core/conditional.js";
 
 const { footer, span, ul, button, li } = htmlElements;
 
-const isSelected = (path) => (location.pathname === path ? "selected" : "");
+// const isSelected = (path) => (location.pathname === path ? "selected" : "");
+const isSelected = (path) => [
+  "filter-link",
+  location.pathname === path && "selected",
+];
+
 
 export const Footer = (filtred) => {
   const active = todos.filterRef((t) => !t.completed);
@@ -23,9 +28,15 @@ export const Footer = (filtred) => {
           });
         }),
         ul({ class: "filters" }).add(
-          li().add(Link("/", "All", isSelected("/"))),
-          li().add(Link("/active", "Active", isSelected("/active"))),
-          li().add(Link("/completed", "Completed", isSelected("/completed")))
+         // li().add(Link("/", "All", isSelected("/"))),
+          // li().add(Link("/active", "Active", isSelected("/active"))),
+          // li().add(Link("/completed", "Completed", isSelected("/completed")))
+          li().add(Link("/", "All", { className: isSelected("/") })),
+          li().add(Link("/active", "Active", { className: isSelected("/active") })),
+
+          li().add(Link("/completed", "Completed", { className: isSelected("/completed") }))
+
+          
         ),
         button({
           class: "clear-completed",

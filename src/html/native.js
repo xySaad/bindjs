@@ -8,7 +8,7 @@ const asyncAppend = function (...children) {
         const value = await child;
         results.push(value);
       } catch (err) {
-        console.error(err);
+        console.error(err); 
       }
     }
     this.append(...results);
@@ -47,7 +47,9 @@ export const createBindElement = (tagName, attributes = {}) => {
       let scheduled = false;
 
       const updateAttr = () => {
-        element.setAttr(key, internalValue.join(" "));
+        // element.setAttr(key, internalValue.join(" "));
+        element.setAttr(key, internalValue.filter(Boolean).join(" "));
+
         scheduled = false;
       };
 
@@ -69,7 +71,9 @@ export const createBindElement = (tagName, attributes = {}) => {
           internalValue[i] = v;
         }
       }
-      element.setAttr(key, internalValue.join(" "));
+      // element.setAttr(key, internalValue.join(" "));
+      element.setAttr(key, internalValue.filter(Boolean).join(" "));
+
     } else if (value instanceof Reference) {
       value.addTrigger((v) => element.setAttr(key, v));
     } else {

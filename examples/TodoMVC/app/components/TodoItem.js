@@ -11,6 +11,7 @@ const { li, div, input, label, button } = htmlElements;
  */
 export const TodoItem = (todo) => {
   const editing = useReference(false, (v) => (v ? "editing" : ""));
+  
   const todoText = useReference(todo.title);
 
   const keyEnter = (e) => {
@@ -26,7 +27,13 @@ export const TodoItem = (todo) => {
     }
   };
 
-  return li({ class: [todo.completed && "completed", editing] }).add(
+  return li({
+  className: [
+    "todo-item",
+    todo.completed && "completed",
+    editing,
+  ]
+}).add(
     frag(
       div({ class: "view" }).add(
         input({
