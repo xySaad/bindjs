@@ -14,6 +14,20 @@ export const If = (reference, element) => {
 
   return active;
 };
+
+export const IfElse = (reference, trueElement, falseElement) => {
+  let active = null;
+
+  reference.addTrigger(async (value) => {
+    const resolvedElement = value ? trueElement : falseElement;
+    if (active === resolvedElement) return;
+    active?.replaceWith(resolvedElement);
+    active = resolvedElement;
+  });
+
+  return active;
+};
+
 export const When = (effect) => {
   const ctx = new Map();
   const watch = (ref) => {

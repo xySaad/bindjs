@@ -1,0 +1,411 @@
+# BindJS Documentation
+
+BindJS is a lightweight, reactive JavaScript framework for building dynamic web applications with minimal overhead. It provides reactive state management, conditional rendering, routing, and HTML element creation utilities.
+
+## Core Concepts
+
+### Reactive References
+
+The foundation of BindJS is the reactive reference system, implemented in `src/core/reference.js`.
+
+#### Creating References
+
+```javascript
+import { useReference } from './src/core/reference.js';
+
+// Create a reference with initial value
+const count = useReference(0);
+
+// Get current value
+console.log(count()); // 0
+
+// Set new value
+count(5);
+
+// Update with function
+count(prev => prev + 1);
+```
+
+#### Listening to Changes
+
+```javascript
+const name = useReference('John');
+
+// Add trigger that fires when value changes
+name.addTrigger((newValue) => {
+  console.log('Name changed to:', newValue);
+});
+
+name('Jane'); // Logs: "Name changed to: Jane"
+```
+
+#### Reference Methods
+
+- **`.map(callback)`** - Transform array values and render DOM elements
+- **`.every(callback)`** - Create derived reference checking if all items match condition
+- **`.filterRef(callback)`** - Create derived reference with filtered array
+- **`.len()`** - Create derived reference with array length
+
+### HTML Element Creation
+
+BindJS provides a declarative way to create HTML elements with reactive attributes.
+
+#### Basic Usage
+
+```javascript
+import html from './src/html/index.js';
+
+// Create elements
+const button = html.button({
+  textContent: 'Click me',
+  onclick: () => console.log('Clicked!')
+});
+
+const input = html.input({
+  type: 'text',
+  placeholder: 'Enter name'
+});
+```
+
+#### Reactive Attributes
+
+```javascript
+const isVisible = useReference(true);
+const message = useReference('Hello World');
+
+const element = html.div({
+  textContent: message,
+  style: isVisible.map(visible => visible ? 'display: block' : 'display: none'),
+  class: ['container', isVisible.map(v => v ? 'visible' : 'hidden')]
+});
+```
+
+#### Adding Children
+
+```javascript
+const container = html.div()
+  .add(
+    html.h1({ textContent: 'Title' }),
+    html.p({ textContent: 'Content' })
+  );
+```
+
+### Conditional Rendering
+
+The `If` function provides conditional rendering based on reactive values.
+
+While the `Ifelse` is an 
+
+```javascript
+import { If } from './src/core/conditional.js';
+
+const showContent = useReference(false);
+const content = html.div({ textContent: 'Conditional content' });
+
+// Element will be shown/hidden based on showContent value
+const conditionalElement = If(showContent, content);
+
+// Toggle visibility
+showContent(true);  // Shows content
+showContent(false); // Hides content
+```
+
+#### Advanced Conditional Rendering
+
+```javascript
+import { When, toggle } from './src/core/conditional.js';
+
+// Toggle between two states
+const [toggleMode, switchContent, currentMode] = toggle('light', 'dark');
+
+const themeContent = switchContent(
+  html.div({ textContent: 'Light theme' }),
+  html.div({ textContent: 'Dark theme' })
+);
+
+// Switch modes
+toggleMode(); // Switches between light/dark
+```
+
+### Routing
+
+BindJS includes a simple client-side routing system.
+
+#### Setting Up Routes
+
+```javascript
+// In your router configuration
+const routes = {
+  '/': () => html.div({ textContent: 'Home Page' }),
+  '/about': () => html.div({ textContent: 'About Page' }),
+  '/contact': () => html.div({ textContent: 'Contact Page' })
+};
+```
+
+#### Navigation Links
+
+```javascript
+import { Link } from './src/router/Link.js';
+
+// Create navigation links
+const navigation = html.nav().add(
+  Link('/', 'Home', 'nav-link'),
+  Link('/about', 'About', 'nav-link'),
+  Link('/contact', 'Contact', 'nav-link')
+);
+```
+
+#### Route Parameters
+
+```javascript
+import { GetParams } from './src/router/index.js';
+
+// Access route parameters
+const params = GetParams();
+console.log(params.id); // Access parameter values
+```
+
+## Utility Functions
+
+### Document Fragments
+
+```javascript
+import { frag } from './src/html/custom/fragment.js';
+
+// Create document fragments
+const fragment = frag(
+  html.h1({ textContent: 'Title' }),
+  html.p({ textContent: 'Paragraph' })
+);
+```
+
+### Element Querying
+
+```javascript
+import { query } from './src/html/native.js';
+
+// Query and enhance existing DOM elements
+const existingElement = query('#my-element');
+if (existingElement) {
+  existingElement.add(html.span({ textContent: 'Added content' }));
+}
+```
+
+## Complete Example
+
+```javascript
+import html from './src/html/index.js';
+import { useReference } from './src/core/reference.js';
+import { If } from './src/core/conditional.js';
+import { Link } from './src/router/Link.js';
+
+// State
+const todos = useReference([]);
+const newTodo = useReference('');
+const filter = useReference('all');
+
+// Actions
+const addTodo = () => {
+  if (newTodo().trim()) {
+    todos(prev => [...prev, {
+      id: Date.now(),
+      text: newTodo(),
+      completed: false
+    }]);
+    newTodo('');
+  }
+};
+
+const toggleTodo = (id) => {
+  todos(prev => prev.map(todo => 
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  ));
+};
+
+// Components
+const TodoApp = html.div({ class: 'todo-app' }).add(
+  html.h1({ textContent: 'Todo App' }),
+  
+  // Add todo form
+  html.form({ 
+    onsubmit: (e) => { e.preventDefault(); addTodo(); }
+  }).add(
+    html.input({
+      type: 'text',
+      placeholder: 'Add new todo',
+      value: newTodo,
+      oninput: (e) => newTodo(e.target.value)
+    }),
+    html.button({ textContent: 'Add', type: 'submit' })
+  ),
+  
+  // Filter buttons
+  html.div({ class: 'filters' }).add(
+    html.button({
+      textContent: 'All',
+      onclick: () => filter('all'),
+      class: filter.map(f => f === 'all' ? 'active' : '')
+    }),
+    html.button({
+      textContent: 'Active',
+      onclick: () => filter('active'),
+      class: filter.map(f => f === 'active' ? 'active' : '')
+    }),
+    html.button({
+      textContent: 'Completed',
+      onclick: () => filter('completed'),
+      class: filter.map(f => f === 'completed' ? 'active' : '')
+    })
+  ),
+  
+  // Todo list
+  html.ul({ class: 'todo-list' }).add(
+    todos.map(todoList => 
+      todoList
+        .filter(todo => {
+          const currentFilter = filter();
+          if (currentFilter === 'active') return !todo.completed;
+          if (currentFilter === 'completed') return todo.completed;
+          return true;
+        })
+        .map(todo => 
+          html.li({
+            class: todo.completed ? 'completed' : ''
+          }).add(
+            html.input({
+              type: 'checkbox',
+              checked: todo.completed,
+              onchange: () => toggleTodo(todo.id)
+            }),
+            html.span({ textContent: todo.text })
+          )
+        )
+    )
+  ),
+  
+  // Todo count
+  html.div({ class: 'todo-count' }).add(
+    todos.map(list => 
+      html.span({ 
+        textContent: `${list.filter(t => !t.completed).length} items left` 
+      })
+    )
+  )
+);
+
+// Mount to DOM
+document.body.appendChild(TodoApp);
+```
+
+## API Reference
+
+### Core Functions
+
+#### `useReference(initialValue)`
+Creates a reactive reference that can hold and notify about value changes.
+
+**Parameters:**
+- `initialValue` - The initial value for the reference
+
+**Returns:** A function that acts as both getter and setter, with additional methods.
+
+#### `If(reference, element)`
+Conditionally renders an element based on a reactive reference value.
+
+**Parameters:**
+- `reference` - A reactive reference to watch
+- `element` - DOM element to show when reference is truthy
+
+**Returns:** The active DOM node (initially `null`)
+
+#### `When(reference, trueElement, falseElement)`
+Switches between two elements based on a reactive reference value.
+
+#### `toggle(value1, value2)`
+Creates a toggle system between two values.
+
+**Returns:** `[toggleFunction, switchContentFunction, currentModeReference]`
+
+### HTML Creation
+
+#### `html.{tagName}(attributes)`
+Creates HTML elements with reactive attributes.
+
+**Parameters:**
+- `attributes` - Object containing element properties and attributes
+
+**Returns:** DOM element with `.add()` method for adding children
+
+#### `.add(...children)`
+Adds child elements to a parent element.
+
+**Parameters:**
+- `children` - DOM elements, text nodes, or arrays of elements
+
+### Router Functions
+
+#### `Link(href, text, className)`
+Creates a navigation link element.
+
+#### `GetParams()`
+Returns current route parameters object.
+
+## Installation
+
+Since BindJS uses ES modules, you can use it directly in modern browsers:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BindJS App</title>
+</head>
+<body>
+    <script type="module">
+        import html from './src/html/index.js';
+        import { useReference } from './src/core/reference.js';
+        
+        // Your app code here
+    </script>
+</body>
+</html>
+```
+
+For development, you can serve the files using a local server:
+
+```bash
+# Using Python
+python -m http.server 8000
+
+# Using Node.js (with http-server)
+npx http-server
+
+# Using PHP
+php -S localhost:8000
+```
+
+## Key Features
+
+- **Reactive State Management** - Automatic UI updates when data changes
+- **Lightweight** - Minimal overhead and bundle size
+- **Type-Safe** - TypeScript definitions included
+- **No Build Required** - Works directly in browsers with ES modules
+- **Declarative** - HTML-like syntax for creating elements
+- **Router Included** - Simple client-side routing
+- **Framework Agnostic** - Can integrate with existing applications
+
+## Browser Support
+
+BindJS works in all modern browsers that support:
+- ES6 modules
+- Async/await
+- Object.setPrototypeOf
+- Document fragments
+
+## License
+
+This project is open source. Please check the license file for more details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues and pull requests.
