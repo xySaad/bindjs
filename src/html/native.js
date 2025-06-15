@@ -36,6 +36,19 @@ export const bindProto = {
       this.setAttribute(key, value);
     }
   },
+  destroy() {
+    if (this.__triggers) {
+      for (const { ref, trigger } of this.__triggers) {
+        ref.removeTrigger(trigger);
+      }
+      this.__triggers = null;
+    }
+
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
+    }
+
+  }
 };
 
 export const createBindElement = (tagName, attributes = {}) => {
