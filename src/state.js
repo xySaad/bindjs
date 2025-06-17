@@ -1,19 +1,24 @@
-export const newState = (defaultValue) => {
-  return {
-    value: defaultValue,
-    setValue(newValue) {
-      this.value = newValue;
-      this.obj.forEach((e) => {
-        e();
-      });
-    },
+export class Reference {
+  #value = null;
+  #triggers = [];
+  constructor(defaultValue) {
+    this.#value = defaultValue;
+  }
 
-    getValue() {
-      return this.value;
-    },
-    onCHange(action) {
-      this.obj.push(action);
-    },
-    obj: [],
-  };
+  onUpdate(action) {
+    this.#triggers.push(action);
+  }
+  get value() {
+    return this.#value;
+  }
+  set value(newValue) {
+    this.#value = newValue;
+    this.#triggers.forEach((e) => {
+      e();
+    });
+  }
+}
+
+export const ref = (defaultValue) => {
+  return new Reference(defaultValue);
 };
