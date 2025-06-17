@@ -3,11 +3,15 @@ import { ref } from "./src/state.js";
 
 const App = () => {
   const count = ref(0);
-
+  
   return div({
     className: "parent",
     textContent: "Hello World",
   }).add(
+    div({
+      className: "counter",
+      textContent: ["this is a count: ", count, " alo"],
+    }),
     div({
       className: "counter",
       textContent: count,
