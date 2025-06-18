@@ -37,3 +37,12 @@ export const createElement = (tag, attributes = {}) => {
 
 export const div = (attributes) => createElement("div", attributes);
 export const button = (attributes) => createElement("button", attributes);
+export const section = (attributes) => createElement("section", attributes);
+export const h1 = (attributes) => createElement("h1", attributes);
+export const header = (attributes) => createElement("header", attributes);
+export const input = (attributes) => createElement("input", attributes);
+export const main = (attributes) => createElement("main", attributes);
+export const li = (attributes) => createElement("li", attributes);
+export const label = (attributes) => createElement("label", attributes);
+export const footer = (attributes) => createElement("footer", attributes);
+export const ul = (attributes) => createElement("ul", attributes);
