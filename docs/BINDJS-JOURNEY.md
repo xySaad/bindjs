@@ -145,12 +145,14 @@ First we will update the `createBindElement` function for better flexebilty
 export const createBindElement = (tagName, attributes = {}) => {
   const element = document.createElement(tagName);
   element.add = asyncAppend;
-  if (key in element) {
-    // attaching events and element properties
-    element[key] = value;
-  } else {
-    // normal attributes
-    element.setAttribute(key, value);
+  for (const [key, value] of Object.entries(attributes)) {
+    if (key in element) {
+      // attaching events and element properties
+      element[key] = value;
+    } else {
+      // normal attributes
+      element.setAttribute(key, value);
+    }
   }
   return element;
 };
@@ -158,6 +160,141 @@ export const createBindElement = (tagName, attributes = {}) => {
 
 See line 3 in [/src/html/native.js](/src/html/native.js) for the implementation of `asyncAppend`
 
-#### Binding variables to DOM elements
+#### Binding mechanism
 
-There are several ways to bind a certain variable to an element or an attribute, ...
+imagine we have some states:
+
+```js
+let success = 0;
+let fail = 0:
+let total  = success + fail;
+fail = 5
+success =
+```
+
+noramlly if fail or success has changed total is not gonna be calculated again.
+
+first we need to listen on the changes of success or fail states then when a change has occured re-calculate the total state; meaning we should register what's dependent on a state (in this case total is dependent on both states: success and fail).
+
+##### Listenting on changes:
+
+We can listen on changes on certain state by defining a setter
+
+```js
+class State {
+  #value = 0;
+  constructor(defaultValue) {
+    this.#value = 0;
+  }
+  set value(newValue) {
+    this.#value = newValue;
+    console.log("state has changed");
+  }
+  get value() {
+    return this.#value;
+  }
+}
+```
+
+Registering dependencies:
+
+```js
+class State {
+  #value = 0;
+  constructor(defaultValue) {
+    this.#value = 0;
+  }
+  set value(newValue) {
+    this.#value = newValue;
+    // invoke all registred dependencies/subscribers
+    for (const dep of this.#dependencies) dep();
+  }
+  get value() {
+    return this.#value;
+  }
+  // bind a certain action with the change of the state
+  #dependencies = [];
+  register(callback) {
+    this.#dependencies.push(callback);
+  }
+}
+```
+
+Example of usage:
+
+```js
+// inital states
+const success = new State(0);
+const fail = new State(0);
+let total = success.value + fail.value;
+
+// binding total to both success and fail states
+const printTotal = () => {
+  total = success.value + fail.value;
+  console.log("total has changed to:", total);
+};
+success.register(printTotal);
+fail.register(printTotal);
+
+// reactive updates
+fail.value = 5; // total has changed to: 5
+success.value = 3; // total has changed to: 8
+fail.value = 6; // total has changed to: 9
+console.log(total); // 9
+```
+
+Helper function:
+
+```js
+const ref = (defaultValue) => {
+  return new State(defaultValue);
+};
+```
+
+##### Binding DOM elements to states
+
+```js
+const { div, button } = htmlElements;
+const App = () => {
+  const count = ref(0);
+  const countDisplay = div({
+    className: "counter",
+    textContent: count.value,
+  });
+  count.register(() => (countDisplay.textContent = count.value));
+
+  return div({
+    className: "parent",
+    textContent: "Hello World",
+  }).add(
+    countDisplay,
+    button({
+      textContent: "increment",
+      onclick: () => count.value++,
+    })
+  );
+};
+
+document.querySelector("body").append(App());
+```
+
+We can make the code more declarative by detecting if certain value (count) is a state then registering the proccess of updating it's property (textContent) to the new value.
+
+```js
+export const createBindElement = (tagName, attributes = {}) => {
+  const element = document.createElement(tagName);
+  element.add = asyncAppend;
+  element.setAttr = setAttr;
+  for (const [key, value] of Object.entries(attributes)) {
+    if (value instanceof State) {
+      element[key] = value.value;
+      value.register(() => {
+        element[key] = value.value;
+      });
+    } else {
+      element[key] = value;
+    }
+  }
+  return element;
+};
+```
