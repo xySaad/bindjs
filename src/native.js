@@ -10,9 +10,15 @@ export const createElement = (tag, attributes = {}) => {
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof Reference) {
       elm[key] = value.value;
-      value.onUpdate(() => {
+      const trigger = () => {
         elm[key] = value.value;
-      });
+      };
+      elm._refTrigger = trigger;
+      value.onUpdate(trigger);
+
+      // value.onUpdate(() => {
+      //   elm[key] = value.value;
+      // });
     } else if (Array.isArray(value)) {
       const temp = [];
       for (let i = 0; i < value.length; i++) {

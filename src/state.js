@@ -5,8 +5,9 @@ export class Reference {
     this.#value = defaultValue;
   }
 
-  onUpdate(action) {
+  onUpdate(action) {    
     this.#triggers.push(action);
+    return action 
   }
   get value() {
     return this.#value;
@@ -22,6 +23,14 @@ export class Reference {
      this.#triggers.forEach((e) => {
       e();
     });
+  }
+
+   destroy(action) {
+    console.log("before",this.#triggers);
+    
+    this.#triggers = this.#triggers.filter((fn) => fn !== action);
+    console.log("after",this.#triggers);
+
   }
 }
 
