@@ -14,7 +14,7 @@ export const If = (reference, element) => {
 
   return active;
 };
-export const When = (effect) => {
+export const When = (condition, effect) => {
   const ctx = new Map();
   const watch = (ref) => {
     const px = new Proxy(ref, {
@@ -30,6 +30,7 @@ export const When = (effect) => {
 
   const initalValue = effect(watch);
   let active = initalValue || document.createTextNode("");
+  let prevConditionResult;
   const trigger = (props) => {
     return (refValue) => {
       const hasChanged = Object.getOwnPropertyNames(refValue).some((key) => {
@@ -39,8 +40,10 @@ export const When = (effect) => {
           return true;
         }
       });
-
+      const currentConditionResult = condition();
       if (!hasChanged) return;
+      if (currentConditionResult === prevConditionResult) return;
+      prevConditionResult = currentConditionResult;
       const resolvedElement = effect((v) => v()) || document.createTextNode("");
       active?.replaceWith(resolvedElement);
       active = resolvedElement;
