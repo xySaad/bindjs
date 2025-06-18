@@ -12,7 +12,13 @@ export const Task = (item) => {
 }
 
 export const Main = () => {
-    return main({ className: "main", "data-testid": "main" }).add(UpdateComponent(ul({ className: "todo-list", "data-testid": "todo-list" }), todoItem, Task)
+    return main({ className: "main", "data-testid": "main" }).add(
+        ul({ className: "todo-list", "data-testid": "todo-list" }).add(
+            Task("placeholder"),
+            ...todoItem.value.map(Task)
+        )
+
+        // UpdateComponent(u    l({ className: "todo-list", "data-testid": "todo-list" }).add(Task("placeholder")),todoItem, Task)
     );
 }
 
