@@ -1,13 +1,11 @@
 import { div, h1, header, input, label } from "../../src/native.js"
 import { ref } from "../../src/state.js"
-import { Task } from "./main.js"
 
 export let todoItem = ref([])
 export const Header = () => {
     const HandleChange = (e) => {
-        if (e.key == "Enter") {
+        if (e.key == "Enter"&&e.target.value.trim().length!=0) {
             todoItem.Push(e.target.value)
-            console.log(todoItem);
             e.target.value=""
         }
     }
