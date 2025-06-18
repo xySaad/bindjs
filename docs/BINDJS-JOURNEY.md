@@ -298,3 +298,28 @@ export const createBindElement = (tagName, attributes = {}) => {
   return element;
 };
 ```
+
+the code will be like this:
+
+```js
+const { div, button } = htmlElements;
+const App = () => {
+  const count = ref(0);
+
+  return div({
+    className: "parent",
+    textContent: "Hello World",
+  }).add(
+    div({
+      className: "counter",
+      textContent: count,
+    }),
+    button({
+      textContent: "increment",
+      onclick: () => count.value++,
+    })
+  );
+};
+
+document.querySelector("body").append(App());
+```
