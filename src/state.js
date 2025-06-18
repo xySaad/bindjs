@@ -17,6 +17,12 @@ export class Reference {
       e();
     });
   }
+  Push(pushable){
+    this.#value.push(pushable)
+     this.#triggers.forEach((e) => {
+      e();
+    });
+  }
 }
 
 export const ref = (defaultValue) => {
