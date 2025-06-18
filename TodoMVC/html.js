@@ -1,4 +1,14 @@
-
+import {
+  div,
+  footer,
+  h1,
+  header,
+  main,
+  section,
+  input,
+  label,
+  ul,
+} from "../src/native.js";
  export const CreatHTML=()=>{
    return  section({ className: "todoapp", id: "root" }).add(
         header({ className: "header", "date-testid": "header" }).add(
