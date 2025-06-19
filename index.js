@@ -4,14 +4,15 @@ import { ref } from "./src/state.js";
 const App = () => {
     const count = ref(0);
     const counterDiv = div({
-    className: "counter",
-    textContent: count,
-  });
+        className: "counter",
+        textContent: count,
+    });
     const RemoveItem = () => {
-        console.log(counterDiv._refTrigger);
-        
-        count.destroy(counterDiv._refTrigger); // Clean up
-    counterDiv.remove();  
+        console.log(counterDiv);
+        counterDiv.cleanup?.(); 
+        counterDiv.remove();
+        //     count.destroy(counterDiv._refTrigger);
+        // counterDiv.remove();  
     }
     return div({
         className: "parent",

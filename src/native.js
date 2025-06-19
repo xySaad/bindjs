@@ -6,6 +6,13 @@ export const createElement = (tag, attributes = {}) => {
     elm.append(...child);
     return elm;
   };
+  elm.cleanup = () => {
+    if (elm._refTriggers) {
+      for (const { ref, trigger } of elm._refTriggers) {
+        ref.destroy(trigger);
+      }
+    }
+  };
 
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof Reference) {
@@ -13,8 +20,13 @@ export const createElement = (tag, attributes = {}) => {
       const trigger = () => {
         elm[key] = value.value;
       };
-      elm._refTrigger = trigger;
       value.onUpdate(trigger);
+      //hadi bash nstoriw multi triggers for one elements instead of one trigger for each element 
+      if (!elm._refTriggers) elm._refTriggers = [];
+      elm._refTriggers.push({ ref: value, trigger });
+
+      // elm._refTrigger = trigger;
+      // value.onUpdate(trigger);
 
       // value.onUpdate(() => {
       //   elm[key] = value.value;
