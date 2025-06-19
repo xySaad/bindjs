@@ -78,7 +78,7 @@ document.querySelector("app").append(parent);
 
 **Inspired by**: [Chained Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#chained_promises)
 
-Even with wrappers, It still not clean enough. Why should I assign `parent` to a variable if I’m not reusing it or attaching events?
+Even with wrappers, It is still not clean enough. Why should I assign `parent` to a variable if I’m not reusing it or attaching events?
 
 ### Instead of this:
 
@@ -111,7 +111,7 @@ app.append(
 );
 ```
 
-The issue? `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `createBindElement`:
+The issue is `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `createBindElement`:
 
 ---
 
@@ -139,7 +139,7 @@ Here’s a working [example app](/examples/coffeeList) that demonstrates the app
 
 ## Reactivity
 
-First we will update the `createBindElement` function for better flexebilty
+First we will update the `createBindElement` function for better flexibility
 
 ```js
 export const createBindElement = (tagName, attributes = {}) => {
