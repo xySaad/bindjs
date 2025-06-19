@@ -182,9 +182,9 @@ We can listen on changes on certain state by defining a setter
 
 ```js
 class State {
-  #value = 0;
+  #value = null;
   constructor(defaultValue) {
-    this.#value = 0;
+    this.#value = defaultValue;
   }
   set value(newValue) {
     this.#value = newValue;
@@ -200,9 +200,9 @@ Registering dependencies:
 
 ```js
 class State {
-  #value = 0;
+  #value = null;
   constructor(defaultValue) {
-    this.#value = 0;
+    this.#value = defaultValue;
   }
   set value(newValue) {
     this.#value = newValue;
