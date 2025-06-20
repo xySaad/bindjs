@@ -25,10 +25,10 @@ export class State {
 }
 
 export class List extends State {
-  Push(pushable) {
+  push(pushable) {
     this.value = [...this.value, pushable];
   }
-  Remove(index) {
+  remove(index) {
     this.value.splice(index, 1);
     this.value = this.value;
   }
@@ -36,16 +36,16 @@ export class List extends State {
     if (!(this instanceof List))
       throw new Error("this doesn't implement interface List");
 
-    this.value.forEach((e, i) => {
-      parentNode.add(component(e.value, i));
+    this.value.forEach((item, i) => {
+      parentNode.add(component(item.value, i));
     });
 
     this.register(() => {
       while (parentNode.firstChild) {
         parentNode.removeChild(parentNode.firstChild);
       }
-      this.value.forEach((e, i) => {
-        parentNode.add(component(e, i));
+      this.value.forEach((item, i) => {
+        parentNode.add(component(item, i));
       });
     });
   }

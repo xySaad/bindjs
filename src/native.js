@@ -1,19 +1,29 @@
 import { List, State } from "./state.js";
 
-export const createElement = (tag, attributes = {}) => {
-  const elm = document.createElement(tag);
+const bindProto = {
+  add: function (...child) {
+    this.append(...child);
+    return this;
+  },
 
-  elm.add = (...child) => {
-    elm.append(...child);
-    return elm;
-  };
-
-  elm.bind = function (list, callback) {
+  bind: function (list, callback) {
     if (!(list instanceof List)) return;
     list.bind(this, callback);
     return this;
-  };
+  },
 
+  // setAttr: function (key, value) {
+  //   if (key in this) {
+  //     this[key] = value;
+  //   } else {
+  //     this.setAttribute(key, value);
+  //   }
+  // },
+};
+
+export const createElement = (tag, attributes = {}) => {
+  const elm = document.createElement(tag);
+  Object.assign(elm, bindProto);
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof State) {
       elm[key] = value.value;
@@ -41,6 +51,24 @@ export const createElement = (tag, attributes = {}) => {
       elm[key] = value;
     }
   }
+
+  const is = Object.entries(elm.is ?? {});
+  for (const [key, value] of is) {
+    if (!(value instanceof State))
+      throw new Error(
+        `can't bind ${key} to ${value} because it doesn't implement interface State`
+      );
+
+    value.register(() => {
+      elm[key] = value.value;
+    });
+  }
+
+  elm.onchange = (e) => {
+    for (const [key, value] of is) {
+      value.value = e.target[key];
+    }
+  };
   return elm;
 };
 

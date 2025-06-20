@@ -1,9 +1,7 @@
 import { div, footer, li, span, ul } from "../../src/native.js";
-import { todoList } from "./header.js";
+import { todoList } from "./context/todos.js";
 
 export const Footer = () => {
-  console.log(todoList.value.lenght);
-
   return footer({ className: "footer", "date-testid": "footer" }).add(
     span({
       class: "todo-count",

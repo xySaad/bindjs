@@ -1,11 +1,16 @@
 import { div, input, label, main, ul } from "../../src/native.js";
 import { ref } from "../../src/state.js";
 import { Task } from "./components/TodoTask.js";
-import { todoList } from "./header.js";
+import { todoList } from "./context/todos.js";
 
 const checkAllItems = () => {
   const checked = ref(false);
-
+  checked.register(() => {
+    todoList.value = todoList.value.map((t) => ({
+      value: t.value,
+      checked: checked.value,
+    }));
+  });
   return div({ className: "toggle-all-container" }).add(
     input({
       className: "toggle-all",
@@ -13,9 +18,6 @@ const checkAllItems = () => {
       id: "toggle-all",
       "data-testid": "toggle-all",
       is: { checked },
-      onclick: () => {
-        todoList.value = todoList.value.map((t) => ({ ...t, checked }));
-      },
     }),
     label({
       className: "toggle-all-label",

@@ -1,25 +1,27 @@
 import { div, h1, header, input, label } from "../../src/native.js";
-import { makelist } from "../../src/state.js";
+import { ref } from "../../src/state.js";
+import { todoList } from "./context/todos.js";
 
-export let todoList = makelist([]);
 export const Header = () => {
-  const HandleChange = (e) => {
-    if (e.key == "Enter" && e.target.value.trim().length != 0) {
-      todoList.Push({ value: e.target.value, checked: false });
-      e.target.value = "";
-    }
-  };
+  const value = ref("");
 
   return header({ className: "header", "date-testid": "header" }).add(
     h1({ textContent: "todos" }),
     div({ className: "input-container" }).add(
       input({
+        autofocus: true,
         className: "new-todo",
         id: "todo-input",
         type: "text",
         "data-testid": "text-input",
         placeholder: "What needs to be done?",
-        onkeydown: (e) => HandleChange(e),
+        is: { value },
+        onkeyup: (e) => {
+          if (e.key == "Enter" && value.value.trim().length != 0) {
+            todoList.push({ value: value.value, checked: false });
+            value.value = "";
+          }
+        },
       }),
       label({
         className: "visually-hidden",
