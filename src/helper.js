@@ -17,7 +17,10 @@ export function UpdateComponent(parentNode, listState, component) {
   return parentNode;
 
 }
-
+export const HandleChange = (i) => {
+  todoList.value[i].checked = !todoList.value[i].checked
+  todoList.Set()
+}
 
 export const SelectALl = (e) => {
   const isChecked = e.target.checked

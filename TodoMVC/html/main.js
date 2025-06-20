@@ -1,12 +1,10 @@
-import { SelectALl, UpdateComponent } from "../../src/helper.js";
+import { HandleChange, SelectALl, UpdateComponent } from "../../src/helper.js";
 import { button, div, input, label, li, main, ul } from "../../src/native.js";
 import { ref } from "../../src/state.js";
 import { todoList } from "./header.js";
 
 export const Task = (item, i) => {
     const checked = ref(todoList.value[i].checked);
-    console.log(checked.value);
-
     return li({ className: checked.value ? "completed" : "", "data-testid": "todo-item" }).add(
         div({ className: "view" }).add(
             input({
@@ -14,13 +12,13 @@ export const Task = (item, i) => {
                 checked,
                 type: "checkbox",
                 "data-testid": "todo-item-toggle",
-                onchange: () => todoList.value[i].checked = !todoList.value[i].checked
+                onchange: () => HandleChange(i)
             }),
             label({ "data-testid": "todo-item-label", textContent: item.value }),
             button({
                 className: "destroy",
                 "data-testid": "todo-item-button",
-                onclick: (e) => todoList.Remove(i),
+                onclick: () => todoList.Remove(i),
             })
         )
     );

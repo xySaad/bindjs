@@ -29,9 +29,9 @@ export class List extends State {
     this.value.splice(index, 1)
     this.value = this.value
   }
-  // Set(i, prop, value) {
-  //   this.value[i][prop] = value
-  // }
+  Set() {
+    this.value = this.value
+  }
 }
 export const ref = (defaultValue) => {
   return new State(defaultValue);
