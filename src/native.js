@@ -1,11 +1,17 @@
-import { State } from "./state.js";
+import { List, State } from "./state.js";
 
 export const createElement = (tag, attributes = {}) => {
   const elm = document.createElement(tag);
+
   elm.add = (...child) => {
     elm.append(...child);
     return elm;
+  };
 
+  elm.bind = function (list, callback) {
+    if (!(list instanceof List)) return;
+    list.bind(this, callback);
+    return this;
   };
 
   for (const [key, value] of Object.entries(attributes)) {
@@ -49,3 +55,4 @@ export const li = (attributes) => createElement("li", attributes);
 export const label = (attributes) => createElement("label", attributes);
 export const footer = (attributes) => createElement("footer", attributes);
 export const ul = (attributes) => createElement("ul", attributes);
+export const span = (attributes) => createElement("span", attributes);
