@@ -1,17 +1,19 @@
-import { button, div, h1, header, input, label } from "../../src/native.js"
-import { ref } from "../../src/state.js"
+import {div, h1, header, input, label } from "../../src/native.js"
+import { makelist } from "../../src/state.js"
 
-export let todoItem = ref(["task 1", "task 2"])
+export let todoList = makelist([])
 export const Header = () => {
     const HandleChange = (e) => {
         if (e.key == "Enter" && e.target.value.trim().length != 0) {
-            todoItem.Push(e.target.value)
+            todoList.Push({value:e.target.value,checked:false})
             e.target.value = ""
+
+            console.log(todoList.value);
         }
+        
     }
     return header({ className: "header", "date-testid": "header" }).add(
         h1({ textContent: "todos" }),
-        button({ textContent: "clearAll", onclick: () => todoItem.value = [] }),
         div({ className: "input-container" }).add(
             input({
                 className: "new-todo",

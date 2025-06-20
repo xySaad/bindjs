@@ -1,42 +1,27 @@
-import { Reference } from "./state.js";
+import { State } from "./state.js";
 
 export const createElement = (tag, attributes = {}) => {
   const elm = document.createElement(tag);
   elm.add = (...child) => {
     elm.append(...child);
     return elm;
-  };
-  elm.cleanup = () => {
-    if (elm._refTriggers) {
-      for (const { ref, trigger } of elm._refTriggers) {
-        ref.destroy(trigger);
-      }
-    }
+
   };
 
   for (const [key, value] of Object.entries(attributes)) {
-    if (value instanceof Reference) {
+    if (value instanceof State) {
       elm[key] = value.value;
       const trigger = () => {
         elm[key] = value.value;
       };
-      value.onUpdate(trigger);
-      //hadi bash nstoriw multi triggers for one elements instead of one trigger for each element 
-      if (!elm._refTriggers) elm._refTriggers = [];
-      elm._refTriggers.push({ ref: value, trigger });
-
-      // elm._refTrigger = trigger;
-      // value.onUpdate(trigger);
-
-      // value.onUpdate(() => {
-      //   elm[key] = value.value;
-      // });
+      elm._refTrigger = trigger;
+      value.register(trigger);
     } else if (Array.isArray(value)) {
       const temp = [];
       for (let i = 0; i < value.length; i++) {
-        if (value[i] instanceof Reference) {
+        if (value[i] instanceof State) {
           temp[i] = value[i].value;
-          value[i].onUpdate(() => {
+          value[i].register(() => {
             temp[i] = value[i].value;
             elm[key] = temp.join(" ");
           });
