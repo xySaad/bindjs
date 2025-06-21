@@ -1,7 +1,37 @@
 {
+  "name": "@x.srm/bindjs",
+  "version": "0.0.3",
+  "description": "A minimalist, reactive JavaScript UI framework.",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "scripts"
+  ],
+  "bin": {
+    "bindjs-init": "./scripts/init.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xySaad/bindjs.git"
+  },
+  "keywords": [
+    "reactive",
+    "framework",
+    "javascript",
+    "ui"
+  ],
+  "author": "xySaad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xySaad/bindjs/issues"
+  },
+  "homepage": "https://github.com/xySaad/bindjs#readme",
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
     "eslint": "^9.28.0",
     "eslint-plugin-import": "^2.31.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0"
   }
 }
