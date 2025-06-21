@@ -1,4 +1,4 @@
-import { AddRoute } from "../../src/router/index.js";
+import { AddRoute } from "./src/index.js";
 
 import { App } from "./app/App.js";
 
