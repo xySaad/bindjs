@@ -1,10 +1,7 @@
-import htmlElements from "../../src/html/index.js";
-import { frag } from "../../src/html/custom/fragment.js";
-import { Link } from "../../../src/router/Link.js";
+import html, { Link, frag, If, When } from "../src/index.js";
 import { deleteCompleted, todos } from "./context/todos.js";
-import { If, When } from "../../../src/core/conditional.js";
 
-const { footer, span, ul, button, li } = htmlElements;
+const { footer, span, ul, button, li } = html;
 
 const isSelected = (path) => (location.pathname === path ? "selected" : "");
 

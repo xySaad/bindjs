@@ -1,9 +1,8 @@
-import { If } from "../../../../src/core/conditional.js";
-import htmlElements from "../../src/html/index.js";
+import html, { If } from "../../src/index.js";
 import { toggleAll } from "../context/todos.js";
 import { TodoItem } from "./TodoItem.js";
 
-const { div, ul, input, label, main } = htmlElements;
+const { div, ul, input, label, main } = html;
 
 export const Main = (filtred) => {
   return main({ className: "main" }).add(
