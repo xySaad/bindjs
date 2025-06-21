@@ -1,4 +1,4 @@
-import { useReference } from "../../src/core/reference.js";
+import { useReference } from "../../src/index.js";
 import { uuid } from "../utils/uuid.js";
 export const todoType = {
   completed: false,

@@ -1,9 +1,6 @@
-import htmlElements from "../../src/html/index.js";
-import { frag } from "../../src/html/custom/fragment.js";
+import html, { frag, If, useReference } from "../../src/index.js";
 import { deleteTodo, todos, todoType } from "../context/todos.js";
-import { useReference } from "../../src/core/reference.js";
-import { If } from "../../../../src/core/conditional.js";
-const { li, div, input, label, button } = htmlElements;
+const { li, div, input, label, button } = html;
 
 /**
  * @param {todoType} todo
