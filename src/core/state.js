@@ -22,16 +22,23 @@ export class State {
 }
 
 export class List extends State {
+  #parentNode = null;
+  #component = null;
+
   push(pushable) {
-    this.value = [...this.value, pushable];
+    this.#parentNode.add(this.#component(pushable, this.value.length));
+    this.value.push(pushable);
   }
   remove(index) {
     this.value.splice(index, 1);
-    this.value = this.value;
+    this.#parentNode.children[index].remove();
   }
+
   bind(parentNode, component) {
     if (!(this instanceof List))
       throw new Error("this doesn't implement interface List");
+    this.#parentNode = parentNode;
+    this.#component = component;
 
     this.value.forEach((item, i) => {
       parentNode.add(component(item, i));
@@ -53,8 +60,4 @@ export const ref = (defaultValue) => {
     return new List(defaultValue);
   }
   return new State(defaultValue);
-};
-
-export const makelist = (defaultValue) => {
-  return new List(defaultValue);
 };
