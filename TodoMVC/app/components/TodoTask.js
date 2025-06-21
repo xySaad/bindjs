@@ -1,9 +1,13 @@
-import { button, div, input, label, li } from "../../../src/native.js";
-import { ref } from "../../../src/state.js";
+import html, { bind } from "../../src/index.js";
 import { todoList } from "../context/todos.js";
 
+const { button, div, input, label, li } = html;
 export const Task = (item, i) => {
-  const checked = ref(todoList.value[i].checked);
+  // TODO: support compiled syntax (slighly better runtime performance)
+  // @bind checked = item.checked
+  // @bind checked from item
+
+  const checked = bind(item, "checked");
 
   return li({
     className: checked.value ? "completed" : "",

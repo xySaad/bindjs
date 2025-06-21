@@ -1,7 +1,7 @@
-import { div, h1, header, input, label } from "../../src/native.js";
-import { ref } from "../../src/state.js";
+import { ref } from "../../src/core/state.js";
+import html from "../src/index.js";
 import { todoList } from "./context/todos.js";
-
+const { div, h1, header, input, label } = html
 export const Header = () => {
   const value = ref("");
 
@@ -17,7 +17,7 @@ export const Header = () => {
         placeholder: "What needs to be done?",
         is: { value },
         onkeyup: (e) => {
-          if (e.key == "Enter" && value.value.trim().length != 0) {
+          if (e.key == "Enter" && value.value.trim().length != 0) {            
             todoList.push({ value: value.value, checked: false });
             value.value = "";
           }

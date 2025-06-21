@@ -16,11 +16,8 @@ export class State {
   register(callback) {
     this.#dependencies.push(callback);
   }
-  destroy(action) {
-    this.#dependencies = this.#dependencies.filter((fn) => fn !== action);
-  }
   trigger() {
-    for (const dep of this.#dependencies) dep();
+    for (const dep of this.#dependencies) dep(this.#value);
   }
 }
 
@@ -52,6 +49,9 @@ export class List extends State {
 }
 
 export const ref = (defaultValue) => {
+  if (Array.isArray(defaultValue)) {
+    return new List(defaultValue);
+  }
   return new State(defaultValue);
 };
 

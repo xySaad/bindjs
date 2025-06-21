@@ -1,16 +1,17 @@
-import { div } from "./native.js";
+import html from "../html/index.js";
+const { div } = html;
 
 export class Router {
   constructor() {
     this.routes = new Map();
     this.currentPath = location.pathname;
 
-    this.onRouteChange = null;
     window.addEventListener("DOMContentLoaded", () => {
-      this.TakeMe();
+      this.render();
     });
   }
-  TakeMe() {
+
+  render() {
     let path = location.pathname;
     let callback = this.routes.get(path);
 
@@ -21,24 +22,18 @@ export class Router {
     }
     document.body.innerHTML = "";
     document.body.append(callback());
-    if (this.onRouteChange) {
-      this.onRouteChange(path);
-    }
   }
 
   SetRoute(path, handler) {
     this.routes.set(path, handler);
   }
+
   navigate(path) {
     if (path != this.currentPath) {
+      console.log(path, this.currentPath);
       history.pushState({}, null, path);
-      this.TakeMe();
-    }
-  }
-
-  HandleChange() {
-    if (this.onRouteChange != null) {
-      this.onRouteChange();
+      this.render();
+      this.currentPath = location.pathname;
     }
   }
 }

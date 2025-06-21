@@ -1,16 +1,12 @@
-import { div, input, label, main, ul } from "../../src/native.js";
-import { ref } from "../../src/state.js";
+import html, { ref } from "../src/index.js";
 import { Task } from "./components/TodoTask.js";
-import { todoList } from "./context/todos.js";
+import { todoList, toggleAll } from "./context/todos.js";
+const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
   const checked = ref(false);
-  checked.register(() => {
-    todoList.value = todoList.value.map((t) => ({
-      value: t.value,
-      checked: checked.value,
-    }));
-  });
+  checked.register(toggleAll);
+
   return div({ className: "toggle-all-container" }).add(
     input({
       className: "toggle-all",

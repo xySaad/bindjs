@@ -1,3 +1,10 @@
-import { makelist } from "../../../src/state.js";
+import { ref } from "../../src/index.js";
 
-export const todoList = makelist([]);
+export const todoList = ref([]);
+
+export const toggleAll = (checked) => {
+  todoList.value = todoList.value.map((t) => ({
+    value: t.value,
+    checked,
+  }));
+};
