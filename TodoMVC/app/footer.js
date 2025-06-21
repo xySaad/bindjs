@@ -8,9 +8,11 @@ export const Footer = () => {
       textContent: [todoList.value.lenght, " item left!"],
     }),
     ul({ className: "filters", "data-testid": "footer-navigaion" }).add(
-      li().add(a( { className: "", href: "#/" ,textContent:"All"})),
-      li().add(a( { className: "", href: "#/active",textContent:"Active" })),
-      li().add(a( { className: "", href: "#/comleted",textContent:"Completed" }))
+      li().add(a({ className: "", href: "/", textContent: "All" })),
+      li().add(a({ className: "", href: "/active", textContent: "Active" })),
+      li().add(
+        a({ className: "", href: "/completed", textContent: "Completed" })
+      )
     )
   );
 };

@@ -4,14 +4,10 @@ import { Main } from "./main.js";
 
 import { Header } from "./header.js";
 
-
 export const App = () => {
-
-    
   return section({ className: "todoapp", id: "root" }).add(
     Header(),
     Main(),
     Footer()
   );
 };
-

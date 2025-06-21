@@ -1,3 +1,4 @@
+import { router } from "./router.js";
 import { List, State } from "./state.js";
 
 const bindProto = {
@@ -84,5 +85,11 @@ export const label = (attributes) => createElement("label", attributes);
 export const footer = (attributes) => createElement("footer", attributes);
 export const ul = (attributes) => createElement("ul", attributes);
 export const span = (attributes) => createElement("span", attributes);
-export const a = (attributes) => createElement("a", attributes);
-
+export const a = (attributes) =>
+  createElement("a", {
+    ...attributes,
+    onclick: (e) => {
+      e.preventDefault();
+      router.navigate(e.currentTarget.getAttribute("href"));
+    },
+  });

@@ -37,7 +37,7 @@ export class List extends State {
       throw new Error("this doesn't implement interface List");
 
     this.value.forEach((item, i) => {
-      parentNode.add(component(item.value, i));
+      parentNode.add(component(item, i));
     });
 
     this.register(() => {
