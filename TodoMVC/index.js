@@ -1,14 +1,13 @@
-import { section } from "../src/native.js";
-import { Footer } from "./app/footer.js";
-import { Header } from "./app/header.js";
-import { Main } from "./app/main.js";
+import { Routes } from "../src/router.js";
+import { App } from "./app/App.js";
 
-export const App = () => {
-  return section({ className: "todoapp", id: "root" }).add(
-    Header(),
-    Main(),
-    Footer()
-  );
-};
+let router = Routes();
+// window.addEventListener("DOMContentLoaded", () => {
+//   router.navigate("/")  
+// });
+// router.setDefaultPath("/");
 
-document.body.append(App());
+router.SetRoute("/TodoMVC/", App);
+
+router.SetRoute("/completed", App);
+router.SetRoute("/active", App);

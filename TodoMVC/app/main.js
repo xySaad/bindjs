@@ -1,4 +1,5 @@
-import { div, input, label, main, ul } from "../../src/native.js";
+import { button, div, input, label, main, ul } from "../../src/native.js";
+import { Routes } from "../../src/router.js";
 import { ref } from "../../src/state.js";
 import { Task } from "./components/TodoTask.js";
 import { todoList } from "./context/todos.js";
@@ -28,11 +29,12 @@ const checkAllItems = () => {
 };
 
 export const Main = () => {
+  let router = Routes()
   return main({ className: "main", "data-testid": "main" }).add(
     checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
       todoList,
       Task
-    )
+    ),button({onclick:()=> router.navigate("/hhh"),textContent:"click me ohhh"})
   );
 };
