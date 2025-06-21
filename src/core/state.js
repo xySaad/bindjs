@@ -33,7 +33,8 @@ export class List extends State {
     this.value.splice(index, 1);
     this.#parentNode.children[index].remove();
   }
-
+  // TODO: change name to map.
+  // use comment/textNode closures (start/end) instead of relying on the parent
   bind(parentNode, component) {
     if (!(this instanceof List))
       throw new Error("this doesn't implement interface List");
