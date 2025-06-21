@@ -8,6 +8,5 @@ let router = Routes();
 // router.setDefaultPath("/");
 
 router.SetRoute("/TodoMVC/", App);
-
 router.SetRoute("/completed", App);
 router.SetRoute("/active", App);

@@ -1,16 +1,16 @@
-import { div, footer, li, span, ul } from "../../src/native.js";
+import { a, div, footer, li, span, ul } from "../../src/native.js";
 import { todoList } from "./context/todos.js";
 
 export const Footer = () => {
   return footer({ className: "footer", "date-testid": "footer" }).add(
     span({
-      class: "todo-count",
+      className: "todo-count",
       textContent: [todoList.value.lenght, " item left!"],
     }),
     ul({ className: "filters", "data-testid": "footer-navigaion" }).add(
-      li().add(div("a", { className: "", href: "#/" })),
-      li().add(div("a", { className: "", href: "#/avtive" })),
-      li().add(div("a", { className: "", href: "#/comleted" }))
+      li().add(a( { className: "", href: "#/" ,textContent:"All"})),
+      li().add(a( { className: "", href: "#/active",textContent:"Active" })),
+      li().add(a( { className: "", href: "#/comleted",textContent:"Completed" }))
     )
   );
 };
