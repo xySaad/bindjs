@@ -1,4 +1,4 @@
-import html, { bind } from "../../src/index.js";
+import html, { bind, bindAs } from "../../src/index.js";
 import { todoList } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
@@ -12,6 +12,7 @@ export const Task = (item, i) => {
   return li({
     className: checked.value ? "completed" : "",
     "data-testid": "todo-item",
+    "data-chcked": bindAs(checked),
   }).add(
     div({ className: "view" }).add(
       input({
