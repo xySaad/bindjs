@@ -7,6 +7,13 @@ export const bind = (valueToUpdate, prop) => {
   return state;
 };
 
-export const bindAs = (stateToTrack, prop) => {
-  stateToTrack.register
+export const bindAs = (stateToTrack, prop, callback) => {
+  const state = ref(stateToTrack.value);
+  stateToTrack.register((v) => {
+    let newValue = prop ? v[prop] : v;
+
+    if (callback) newValue = newValue.call(v, callback);
+    state.value = newValue;
+  });
+  return state;
 };

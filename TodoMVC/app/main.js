@@ -25,7 +25,7 @@ const checkAllItems = () => {
 
 export const Main = () => {
   return main({ className: "main", "data-testid": "main" }).add(
-    checkAllItems(),
+    (w, c) => c(() => w(todoList).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
       todoList,
       Task

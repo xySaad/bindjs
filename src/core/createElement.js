@@ -1,8 +1,17 @@
+import { When } from "./conditional.js";
 import { List, State } from "./state.js";
 
 export const bindProto = {
-  add: function (...child) {
-    this.append(...child);
+  add: function (...children) {
+    const frag = document.createDocumentFragment();
+    for (const child of children) {
+      if (typeof child === "function") {
+        frag.appendChild(When(child));
+      } else {
+        frag.appendChild(child);
+      }
+    }
+    this.append(frag);
     return this;
   },
 

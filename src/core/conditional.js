@@ -11,8 +11,14 @@ export const When = (effect) => {
     ctx.set(ref, {});
     return px;
   };
+  let condition = null;
+  let conditionResult = null;
+  const registerCondition = (c) => {
+    condition = c;
+    return (conditionResult = c());
+  };
 
-  const initalValue = effect(watch);
+  const initalValue = effect(watch, registerCondition);
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
     return (refValue) => {
@@ -23,9 +29,16 @@ export const When = (effect) => {
           return true;
         }
       });
+
       if (!hasChanged) return;
+
+      const res = condition();
+      if (conditionResult === res) return;
+      conditionResult = res;
+
       const resolvedElement =
-        effect((v) => v.value) || document.createTextNode("");
+        effect((v) => v.value, registerCondition) ||
+        document.createTextNode("");
       active?.replaceWith(resolvedElement);
       active = resolvedElement;
     };

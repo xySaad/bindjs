@@ -17,7 +17,12 @@ export class State {
     this.#dependencies.push(callback);
   }
   trigger() {
-    for (const dep of this.#dependencies) dep(this.#value);
+    for (const dep of this.#dependencies) {
+      if (this instanceof List) {
+        console.log(dep.toString());
+      }
+      dep(this.#value);
+    }
   }
 }
 
@@ -26,8 +31,18 @@ export class List extends State {
   #component = null;
 
   push(pushable) {
-    this.#parentNode.add(this.#component(pushable, this.value.length));
-    this.value.push(pushable);
+    const px = new Proxy(pushable, {
+      get(target, prop) {
+        return target[prop];
+      },
+      set: (target, prop, newValue) => {
+        target[prop] = newValue;
+        this.trigger();
+        return true;
+      },
+    });
+    this.#parentNode.add(this.#component(px, this.value.length));
+    this.value.push(px);
     this.trigger();
   }
   remove(index) {
@@ -53,15 +68,6 @@ export class List extends State {
 
     this.value.forEach((item, i) => {
       parentNode.add(component(item, i));
-    });
-
-    this.register(() => {
-      while (parentNode.firstChild) {
-        parentNode.removeChild(parentNode.firstChild);
-      }
-      this.value.forEach((item, i) => {
-        parentNode.add(component(item, i));
-      });
     });
   }
 }
