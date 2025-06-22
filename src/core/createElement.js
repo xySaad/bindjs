@@ -37,7 +37,7 @@ export const createElement = (tag, attributes = {}) => {
   Object.assign(elm, bindProto);
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof State) {
-      value.register(() => elm.setAttr(value.value));
+      value.register(() => elm.setAttr(key, value.value));
       elm.setAttr(key, value.value);
     } else if (Array.isArray(value)) {
       const temp = [];
