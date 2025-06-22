@@ -17,12 +17,7 @@ export class State {
     this.#dependencies.push(callback);
   }
   trigger() {
-    for (const dep of this.#dependencies) {
-      if (this instanceof List) {
-        console.log(dep.toString());
-      }
-      dep(this.#value);
-    }
+    for (const dep of this.#dependencies) dep(this.#value);
   }
 }
 
