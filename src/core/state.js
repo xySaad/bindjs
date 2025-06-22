@@ -28,11 +28,21 @@ export class List extends State {
   push(pushable) {
     this.#parentNode.add(this.#component(pushable, this.value.length));
     this.value.push(pushable);
+    this.trigger();
   }
   remove(index) {
     this.value.splice(index, 1);
     this.#parentNode.children[index].remove();
+
+    // Rebind indexes for remaining items
+    for (let i = index; i < this.#parentNode.children.length; i++) {
+      const item = this.value[i];
+      const newNode = this.#component(item, i);
+      this.#parentNode.children[i].replaceWith(newNode);
+    }
+    this.trigger();
   }
+
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
   bind(parentNode, component) {
