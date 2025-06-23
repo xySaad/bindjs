@@ -57,12 +57,15 @@ export class List extends State {
 
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
+  // and create a list for each call of .map
+  // stop relying on global #idx and #parentNode, each map has it's own shit 
   bind(parentNode, component) {
     if (!(this instanceof List))
       throw new Error("this doesn't implement interface List");
     this.#parentNode = parentNode;
     this.#component = component;
-
+    //reset idx cause only one parent is supported
+    this.#idx = [];
     this.value.forEach((item, i) => {
       const refIdx = ref(i);
       this.#idx.push(refIdx);
