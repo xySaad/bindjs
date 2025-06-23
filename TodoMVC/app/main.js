@@ -1,10 +1,10 @@
-import html, { ref } from "../src/index.js";
+import html, { state } from "../src/index.js";
 import { Task } from "./components/TodoTask.js";
 import { todoList, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
-  const checked = ref(false);
+  const checked = state(false);
   checked.register(toggleAll);
 
   return div({ className: "toggle-all-container" }).add(

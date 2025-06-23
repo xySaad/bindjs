@@ -1,9 +1,8 @@
-import { ref } from "../../src/core/state.js";
-import html from "../src/index.js";
+import html, { state } from "../src/index.js";
 import { todoList } from "./context/todos.js";
 const { div, h1, header, input, label } = html
 export const Header = () => {
-  const value = ref("");
+  const value = state("");
 
   return header({ className: "header", "date-testid": "header" }).add(
     h1({ textContent: "todos" }),

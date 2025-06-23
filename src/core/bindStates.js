@@ -1,19 +1,19 @@
-import { ref } from "./state.js";
+import { state } from "./state.js";
 
 export const bind = (valueToUpdate, prop) => {
   const defaultValue = prop ? valueToUpdate[prop] : valueToUpdate;
-  const state = ref(defaultValue);
-  state.register((v) => (valueToUpdate[prop] = v));
-  return state;
+  const st = state(defaultValue);
+  st.register((v) => (valueToUpdate[prop] = v));
+  return st;
 };
 
 export const bindAs = (stateToTrack, prop, callback) => {
-  const state = ref(stateToTrack.value);
+  const st = state(stateToTrack.value);
   stateToTrack.register((v) => {
     let newValue = prop ? v[prop] : v;
 
     if (callback) newValue = newValue.call(v, callback);
-    state.value = newValue;
+    st.value = newValue;
   });
-  return state;
+  return st;
 };

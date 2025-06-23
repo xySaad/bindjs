@@ -1,14 +1,14 @@
 export const When = (effect) => {
   const ctx = new Map();
-  const watch = (ref) => {
-    const px = new Proxy(ref, {
+  const watch = (state) => {
+    const px = new Proxy(state, {
       get(target, prop) {
         const v = target.value[prop];
-        ctx.get(ref)[prop] = v;
+        ctx.get(state)[prop] = v;
         return v;
       },
     });
-    ctx.set(ref, {});
+    ctx.set(state, {});
     return px;
   };
   let condition = null;
@@ -21,9 +21,9 @@ export const When = (effect) => {
   const initalValue = effect(watch, registerCondition);
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
-    return (refValue) => {
-      const hasChanged = Object.getOwnPropertyNames(refValue).some((key) => {
-        const value = refValue[key];
+    return (stateValue) => {
+      const hasChanged = Object.getOwnPropertyNames(stateValue).some((key) => {
+        const value = stateValue[key];
         if (Object.hasOwn(props, key) && props[key] !== value) {
           props[key] = value;
           return true;
@@ -44,8 +44,8 @@ export const When = (effect) => {
     };
   };
 
-  ctx.forEach((props, ref) => {
-    ref.register(trigger(props));
+  ctx.forEach((props, state) => {
+    state.register(trigger(props));
   });
 
   return active;

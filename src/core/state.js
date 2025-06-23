@@ -67,9 +67,10 @@ export class List extends State {
   }
 }
 
-export const ref = (defaultValue) => {
-  if (Array.isArray(defaultValue)) {
-    return new List(defaultValue);
-  }
+export const state = (defaultValue) => {
   return new State(defaultValue);
+};
+
+export const list = (defaultValue) => {
+  return new List(defaultValue);
 };
