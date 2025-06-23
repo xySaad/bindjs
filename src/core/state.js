@@ -1,3 +1,5 @@
+import { ref } from "./reference.js";
+
 export class State {
   #value = null;
   constructor(defaultValue) {
@@ -24,7 +26,7 @@ export class State {
 export class List extends State {
   #parentNode = null;
   #component = null;
-
+  #idx = [];
   push(pushable) {
     const px = new Proxy(pushable, {
       get(target, prop) {
@@ -36,19 +38,19 @@ export class List extends State {
         return true;
       },
     });
-    this.#parentNode.add(this.#component(px, this.value.length));
+    const refIdx = ref(this.value.length);
+    this.#idx.push(refIdx);
+    this.#parentNode.add(this.#component(px, refIdx));
     this.value.push(px);
     this.trigger();
   }
   remove(index) {
     this.value.splice(index, 1);
+    this.#idx.splice(index, 1);
     this.#parentNode.children[index].remove();
-
-    // Rebind indexes for remaining items
-    for (let i = index; i < this.#parentNode.children.length; i++) {
-      const item = this.value[i];
-      const newNode = this.#component(item, i);
-      this.#parentNode.children[i].replaceWith(newNode);
+    for (let i = index; i < this.#idx.length; i++) {
+      const idxRef = this.#idx[i];
+      idxRef((prev) => prev - 1);
     }
     this.trigger();
   }
@@ -62,7 +64,9 @@ export class List extends State {
     this.#component = component;
 
     this.value.forEach((item, i) => {
-      parentNode.add(component(item, i));
+      const refIdx = ref(i);
+      this.#idx.push(refIdx);
+      parentNode.add(component(item, refIdx));
     });
   }
 }

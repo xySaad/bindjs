@@ -2,7 +2,7 @@ import html, { bind, bindAs } from "../../src/index.js";
 import { todoList } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
-export const Task = (item, i) => {
+export const Task = (item, idx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
@@ -26,7 +26,7 @@ export const Task = (item, i) => {
       button({
         className: "destroy",
         "data-testid": "todo-item-button",
-        onclick: () => todoList.remove(i),
+        onclick: () => todoList.remove(idx()),
       })
     )
   );
