@@ -22,6 +22,7 @@ export const When = (effect) => {
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
     return (stateValue) => {
+      //Todo: iterate over watched props instead of all stateValue props
       const hasChanged = Object.getOwnPropertyNames(stateValue).some((key) => {
         const value = stateValue[key];
         if (Object.hasOwn(props, key) && props[key] !== value) {
