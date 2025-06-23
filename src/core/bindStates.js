@@ -8,12 +8,12 @@ export const bind = (valueToUpdate, prop) => {
 };
 
 export const bindAs = (stateToTrack, prop, callback) => {
-  const st = state(stateToTrack.value);
-  stateToTrack.register((v) => {
+  const resolveDerivedStateValue = (v) => {
     let newValue = prop ? v[prop] : v;
-
     if (callback) newValue = newValue.call(v, callback);
-    st.value = newValue;
-  });
+    return newValue;
+  };
+  const st = state(resolveDerivedStateValue(stateToTrack.value));
+  stateToTrack.register((v) => (st.value = resolveDerivedStateValue(v)));
   return st;
 };
