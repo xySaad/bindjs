@@ -1,6 +1,6 @@
 import html, { state } from "../src/index.js";
 import { Task } from "./components/TodoTask.js";
-import { todoList, toggleAll } from "./context/todos.js";
+import { getFilterFunc, todoList, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
@@ -24,11 +24,13 @@ const checkAllItems = () => {
 };
 
 export const Main = () => {
+  const filter = getFilterFunc();
+
   return main({ className: "main", "data-testid": "main" }).add(
     (w, c) => c(() => w(todoList).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
       todoList,
-      Task
+      (item, idx) => filter(item) && Task(item, idx)
     )
   );
 };

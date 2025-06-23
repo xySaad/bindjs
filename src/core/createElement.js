@@ -5,11 +5,8 @@ export const bindProto = {
   add: function (...children) {
     const frag = document.createDocumentFragment();
     for (const child of children) {
-      if (typeof child === "function") {
-        frag.appendChild(When(child));
-      } else {
-        frag.appendChild(child);
-      }
+      if (typeof child === "function") frag.appendChild(When(child));
+      else if (child) frag.appendChild(child);
     }
     this.append(frag);
     return this;
