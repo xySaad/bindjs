@@ -1,13 +1,13 @@
 import { A } from "../../src/html/custom/anchor.js";
 import html, { bindAs } from "../src/index.js";
-import { clearAll, todoList } from "./context/todos.js";
+import { clearAll, todosInView, todoList } from "./context/todos.js";
 const { footer, li, span, ul, button } = html;
 
-export const Footer = (filtred) => {
+export const Footer = () => {
   const active = bindAs(todoList, "filter", (i) => !i.checked);
 
   return footer({ className: "footer", "date-testid": "footer" }).add(
-    (w, c) => {
+    (w, c) => {      
       return span({
         className: "todo-count",
         textContent: [
@@ -24,7 +24,7 @@ export const Footer = (filtred) => {
     button({
       className: "clear-completed",
       textContent: "Clear completed",
-      onclick: () => clearAll(filtred),
+      onclick: () => clearAll(todosInView),
     })
   );
 };

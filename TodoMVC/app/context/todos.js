@@ -2,23 +2,6 @@ import { list, router } from "../../src/index.js";
 
 export const todoList = list([]);
 
-export const toggleAll = (checked) => {
-  todoList.value = todoList.value.map((t) => ({
-    value: t.value,
-    checked,
-  }));
-};
-
-export const clearAll = (list) => {
-  for (let i = 0; i < list.value.length; ) {
-    if (list.value[i].checked) {
-      list.remove(i);
-    } else {
-      i++;
-    }
-  }
-};
-
 export const getFilterFunc = () => {
   switch (router.currentPath) {
     case "/":
@@ -30,4 +13,22 @@ export const getFilterFunc = () => {
     default:
       throw new Error("wtf?, how did you get here?!");
   }
+};
+export const todosInView = todoList.derive();
+
+export const clearAll = () => {
+  for (let i = 0; i < todosInView.value.length; ) {
+    if (todosInView.value[i].checked) {
+      todosInView.remove(i);
+    } else {
+      i++;
+    }
+  }
+};
+
+export const toggleAll = (checked) => {
+  todoList.value = todoList.value.map((t) => ({
+    value: t.value,
+    checked,
+  }));
 };
