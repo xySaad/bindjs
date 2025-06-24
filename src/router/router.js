@@ -30,7 +30,6 @@ export class Router {
 
   navigate(path) {
     if (path != this.currentPath) {
-      console.log(path, this.currentPath);
       history.pushState({}, null, path);
       this.currentPath = location.pathname;
       this.render();
