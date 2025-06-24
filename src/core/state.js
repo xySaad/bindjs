@@ -32,7 +32,7 @@ export class List extends State {
     super(defaultValue);
     this.value.forEach((_, i) => this.#idx.push(ref(i)));
   }
-  push(pushable, shouldProxy = false) {
+  push(pushable, shouldProxy = true) {
     const px = shouldProxy
       ? new Proxy(pushable, {
           get(target, prop) {
@@ -41,6 +41,7 @@ export class List extends State {
           set: (target, prop, newValue) => {
             target[prop] = newValue;
             this.trigger();
+            for (const { list: subList } of this.#synced) subList.trigger();
             return true;
           },
         })
