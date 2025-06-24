@@ -27,8 +27,7 @@ export const clearAll = () => {
 };
 
 export const toggleAll = (checked) => {
-  todoList.value = todoList.value.map((t) => ({
-    value: t.value,
-    checked,
-  }));
+  todoList.value.forEach((t) => {
+    t.checked = checked;
+  });
 };
