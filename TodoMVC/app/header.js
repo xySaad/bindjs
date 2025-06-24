@@ -1,7 +1,6 @@
 import html, { state } from "../src/index.js";
-import { todoList } from "./context/todos.js";
-const { div, h1, header, input, label } = html
-export const Header = () => {
+const { div, h1, header, input, label } = html;
+export const Header = (filtred) => {
   const value = state("");
 
   return header({ className: "header", "date-testid": "header" }).add(
@@ -16,8 +15,8 @@ export const Header = () => {
         placeholder: "What needs to be done?",
         is: { value },
         onkeyup: (e) => {
-          if (e.key == "Enter" && value.value.trim().length != 0) {            
-            todoList.push({ value: value.value, checked: false });
+          if (e.key == "Enter" && value.value.trim().length != 0) {
+            filtred.push({ value: value.value, checked: false });
             value.value = "";
           }
         },

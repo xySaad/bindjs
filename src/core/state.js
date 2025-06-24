@@ -27,7 +27,11 @@ export class List extends State {
   #parentNode = null;
   #component = null;
   #idx = [];
+  synced = [];
   push(pushable) {
+    for (const subList of this.synced) {
+      subList.push(pushable);
+    }
     const px = new Proxy(pushable, {
       get(target, prop) {
         return target[prop];
@@ -40,14 +44,17 @@ export class List extends State {
     });
     const refIdx = ref(this.value.length);
     this.#idx.push(refIdx);
-    this.#parentNode.add(this.#component(px, refIdx));
+    this.#parentNode?.add(this.#component(px, refIdx));
     this.value.push(px);
     this.trigger();
   }
   remove(index) {
+    for (const subList of this.synced) {
+      subList.remove(subList.value.indexOf(this.value[index]));
+    }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
-    this.#parentNode.children[index].remove();
+    this.#parentNode?.children[index].remove();
     for (let i = index; i < this.#idx.length; i++) {
       const idxRef = this.#idx[i];
       idxRef((prev) => prev - 1);
@@ -58,7 +65,7 @@ export class List extends State {
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
   // and create a list for each call of .map
-  // stop relying on global #idx and #parentNode, each map has it's own shit 
+  // stop relying on global #idx and #parentNode, each map has it's own shit
   bind(parentNode, component) {
     if (!(this instanceof List))
       throw new Error("this doesn't implement interface List");

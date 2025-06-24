@@ -23,14 +23,13 @@ const checkAllItems = () => {
   );
 };
 
-export const Main = () => {
+export const Main = (filtred) => {
   const filter = getFilterFunc();
-
   return main({ className: "main", "data-testid": "main" }).add(
     (w, c) => c(() => w(todoList).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
-      todoList,
-      (item, idx) => filter(item) && Task(item, idx)
+      filtred,
+      (item, idx) => filter(item) && Task(filtred, item, idx)
     )
   );
 };
