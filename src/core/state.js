@@ -28,20 +28,26 @@ export class List extends State {
   #component = null;
   #idx = [];
   synced = [];
-  push(pushable) {
+  constructor(defaultValue) {
+    super(defaultValue);
+    this.value.forEach((_, i) => this.#idx.push(ref(i)));
+  }
+  push(pushable, shouldProxy = false) {
+    const px = shouldProxy
+      ? new Proxy(pushable, {
+          get(target, prop) {
+            return target[prop];
+          },
+          set: (target, prop, newValue) => {
+            target[prop] = newValue;
+            this.trigger();
+            return true;
+          },
+        })
+      : pushable;
     for (const subList of this.synced) {
-      subList.push(pushable);
+      subList.push(px, false);
     }
-    const px = new Proxy(pushable, {
-      get(target, prop) {
-        return target[prop];
-      },
-      set: (target, prop, newValue) => {
-        target[prop] = newValue;
-        this.trigger();
-        return true;
-      },
-    });
     const refIdx = ref(this.value.length);
     this.#idx.push(refIdx);
     this.#parentNode?.add(this.#component(px, refIdx));
@@ -50,7 +56,9 @@ export class List extends State {
   }
   remove(index) {
     for (const subList of this.synced) {
-      subList.remove(subList.value.indexOf(this.value[index]));
+      const itemToRemove = this.value[index];
+      const indexToRemove = subList.value.indexOf(itemToRemove);
+      subList.remove(indexToRemove);
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
@@ -74,9 +82,7 @@ export class List extends State {
     //reset idx cause only one parent is supported
     this.#idx = [];
     this.value.forEach((item, i) => {
-      const refIdx = ref(i);
-      this.#idx.push(refIdx);
-      parentNode.add(component(item, refIdx));
+      parentNode.add(component(item, this.#idx[i]));
     });
   }
 }

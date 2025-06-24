@@ -10,6 +10,6 @@ export const App = () => {
   return section({ className: "todoapp", id: "root" }).add(
     Header(filtred),
     Main(filtred),
-    (w, c) => c(() => w(todoList).length > 0) && Footer()
+    (w, c) => c(() => w(todoList).length > 0) && Footer(filtred)
   );
 };

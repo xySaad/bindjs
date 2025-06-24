@@ -1,9 +1,9 @@
 import { A } from "../../src/html/custom/anchor.js";
 import html, { bindAs } from "../src/index.js";
-import { todoList } from "./context/todos.js";
-const { footer, li, span, ul } = html;
+import { clearAll, todoList } from "./context/todos.js";
+const { footer, li, span, ul, button } = html;
 
-export const Footer = () => {
+export const Footer = (filtred) => {
   const active = bindAs(todoList, "filter", (i) => !i.checked);
 
   return footer({ className: "footer", "date-testid": "footer" }).add(
@@ -20,6 +20,11 @@ export const Footer = () => {
       li().add(A("", "/", "All")),
       li().add(A("", "/active", "Active")),
       li().add(A("", "/completed", "Completed"))
-    )
+    ),
+    button({
+      className: "clear-completed",
+      textContent: "Clear completed",
+      onclick: () => clearAll(filtred),
+    })
   );
 };

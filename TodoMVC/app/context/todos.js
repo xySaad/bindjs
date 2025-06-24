@@ -9,6 +9,16 @@ export const toggleAll = (checked) => {
   }));
 };
 
+export const clearAll = (list) => {
+  for (let i = 0; i < list.value.length; ) {
+    if (list.value[i].checked) {
+      list.remove(i);
+    } else {
+      i++;
+    }
+  }
+};
+
 export const getFilterFunc = () => {
   switch (router.currentPath) {
     case "/":
