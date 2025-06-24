@@ -79,8 +79,6 @@ export class List extends State {
       throw new Error("this doesn't implement interface List");
     this.#parentNode = parentNode;
     this.#component = component;
-    //reset idx cause only one parent is supported
-    this.#idx = [];
     this.value.forEach((item, i) => {
       parentNode.add(component(item, this.#idx[i]));
     });
