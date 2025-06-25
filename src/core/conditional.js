@@ -1,14 +1,18 @@
 export const When = (effect) => {
   const ctx = new Map();
   const watch = (state) => {
-    const px = new Proxy(state, {
-      get(target, prop) {
-        const v = target.value[prop];
-        ctx.get(state)[prop] = v;
-        return v;
-      },
-    });
     ctx.set(state, {});
+
+    const px =
+      typeof state.value === "object"
+        ? new Proxy(state, {
+            get(target, prop) {
+              const v = target.value[prop];
+              ctx.get(state)[prop] = v;
+              return v;
+            },
+          })
+        : state.value;
     return px;
   };
   let condition = null;
@@ -22,14 +26,16 @@ export const When = (effect) => {
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
     return (stateValue) => {
-      //Todo: iterate over watched props instead of all stateValue props
-      const hasChanged = Object.getOwnPropertyNames(stateValue).some((key) => {
+      console.log(props);
+      let hasChanged = typeof stateValue === "object" ? false : true;
+      for (const key in props) {
         const value = stateValue[key];
-        if (Object.hasOwn(props, key) && props[key] !== value) {
+        if (value !== props[key]) {
           props[key] = value;
-          return true;
+          hasChanged = true;
+          break;
         }
-      });
+      }
 
       if (!hasChanged) return;
 
