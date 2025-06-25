@@ -47,6 +47,7 @@ export const When = (effect) => {
         effect((v) => v.value, registerCondition) ||
         document.createTextNode("");
       active?.replaceWith(resolvedElement);
+      resolvedElement.onAppend?.()
       active = resolvedElement;
     };
   };

@@ -21,7 +21,9 @@ export class Router {
       return;
     }
     document.body.innerHTML = "";
-    document.body.append(callback());
+    const elm = callback()
+    document.body.append(elm);
+    elm.onAppend()
   }
 
   SetRoute(path, handler) {
