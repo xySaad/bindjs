@@ -15,30 +15,40 @@ export const Task = (item, idx) => {
     "data-testid": "todo-item",
     "data-chcked": bindAs(checked),
   }).add(
-    div({ className: "view" }).add(
-      input({
-        className: "toggle",
-        checked,
-        type: "checkbox",
-        "data-testid": "todo-item-toggle",
-        is: { checked },
-      }),
-      (w, c) =>
-        c(() => w(isWritable))
-          ? input({
+    div({ className: "view" }).add((w, c) =>
+      c(() => w(isWritable))
+        ? div({ class: "input-container" }).add(
+            input({
+              className: "new-todo",
+              id: "todo-input",
+              type: "text",
+              "data-testid": "text-input",
+              autoFocus: true,
               defaultValue: item.value,
+
               onblur: () => (isWritable.value = false),
-            })
-          : label({
+            }),
+            label({ class: "visually-hidden", htmlFor: "todo-input" })
+          )
+        : div().add(
+            input({
+              className: "toggle",
+              checked,
+              type: "checkbox",
+              "data-testid": "todo-item-toggle",
+              is: { checked },
+            }),
+            label({
               "data-testid": "todo-item-label",
               textContent: item.value,
               ondblclick: () => (isWritable.value = true),
             }),
-      button({
-        className: "destroy",
-        "data-testid": "todo-item-button",
-        onclick: () => todosInView.remove(idx()),
-      })
+            button({
+              className: "destroy",
+              "data-testid": "todo-item-button",
+              onclick: () => todosInView.remove(idx()),
+            })
+          )
     )
   );
 };
