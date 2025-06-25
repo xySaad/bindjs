@@ -27,14 +27,13 @@ export const Task = (item, idx) => {
             defaultValue: item.value,
             keydown: {
               enter: (e) => {
-                const text = e.target.value
+                const text = e.target.value;
                 if (text.trim().length > 0) {
-                  item.value = e.target.value
+                  item.value = e.target.value;
                 }
-                isWritable.value = false
-              }
+                isWritable.value = false;
+              },
             },
-            ondblclick: () => isWritable.value = true,
             onblur: () => (isWritable.value = false),
           }),
           label({ class: "visually-hidden", htmlFor: "todo-input" })
