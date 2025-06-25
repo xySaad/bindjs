@@ -27,11 +27,13 @@ export const bindProto = {
   },
   // to skip setAttribute
   is: {},
+  keydown: {},
 };
 
 export const createElement = (tag, attributes = {}) => {
   const elm = document.createElement(tag);
   Object.assign(elm, bindProto);
+  elm.onkeydown = (e) => elm.keydown[e.key.toLowerCase()]?.(e)
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof State) {
       value.register(() => elm.setAttr(key, value.value));
