@@ -1,6 +1,7 @@
 import html, { state } from "../src/index.js";
+import { todosInView } from "./context/todos.js";
 const { div, h1, header, input, label } = html;
-export const Header = (filtred) => {
+export const Header = () => {
   const value = state("");
 
   return header({ className: "header", "date-testid": "header" }).add(
@@ -16,7 +17,7 @@ export const Header = (filtred) => {
         is: { value },
         onkeyup: (e) => {
           if (e.key == "Enter" && value.value.trim().length != 0) {
-            filtred.push({ value: value.value, checked: false });
+            todosInView.push({ value: value.value, checked: false });
             value.value = "";
           }
         },

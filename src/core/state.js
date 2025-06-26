@@ -27,12 +27,12 @@ export class List extends State {
   #parentNode = null;
   #component = null;
   #idx = [];
-  synced = [];
-  constructor(defaultValue) {
+  #synced = [];
+  constructor(defaultValue = []) {
     super(defaultValue);
     this.value.forEach((_, i) => this.#idx.push(ref(i)));
   }
-  push(pushable, shouldProxy = false) {
+  push(pushable, shouldProxy = true) {
     const px = shouldProxy
       ? new Proxy(pushable, {
           get(target, prop) {
@@ -41,12 +41,14 @@ export class List extends State {
           set: (target, prop, newValue) => {
             target[prop] = newValue;
             this.trigger();
+            for (const { list: subList } of this.#synced) subList.trigger();
             return true;
           },
         })
       : pushable;
-    for (const subList of this.synced) {
-      subList.push(px, false);
+
+    for (const { list: subList, filter } of this.#synced) {
+      if (!filter || filter(px)) subList.push(px, false);
     }
     const refIdx = ref(this.value.length);
     this.#idx.push(refIdx);
@@ -55,7 +57,7 @@ export class List extends State {
     this.trigger();
   }
   remove(index) {
-    for (const subList of this.synced) {
+    for (const { list: subList } of this.#synced) {
       const itemToRemove = this.value[index];
       const indexToRemove = subList.value.indexOf(itemToRemove);
       subList.remove(indexToRemove);
@@ -69,7 +71,11 @@ export class List extends State {
     }
     this.trigger();
   }
-
+  derive(filter) {
+    const derivedList = new List(this.value);
+    derivedList.#synced.push({ list: this, filter });
+    return derivedList;
+  }
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
   // and create a list for each call of .map
