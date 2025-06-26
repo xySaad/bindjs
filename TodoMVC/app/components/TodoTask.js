@@ -24,7 +24,7 @@ export const Task = (item, idx) => {
             type: "text",
             "data-testid": "text-input",
             autoFocus: true,
-            defaultValue: item.value,
+            value: item.value,
             keydown: {
               enter: (e) => {
                 const text = e.target.value;
