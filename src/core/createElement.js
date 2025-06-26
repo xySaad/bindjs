@@ -3,12 +3,20 @@ import { List, State } from "./state.js";
 
 export const bindProto = {
   add: function (...children) {
+    const resolvedChildren = [];
     const frag = document.createDocumentFragment();
     for (const child of children) {
-      if (typeof child === "function") frag.appendChild(When(child));
-      else if (child) frag.appendChild(child);
+      const resolvedChild = typeof child === "function" ? When(child) : child;
+      resolvedChildren.push(resolvedChild);
+      frag.appendChild(resolvedChild);
     }
-    this.append(frag);
+    this.onAppend = () => {
+      this.append(frag);
+      for (const child of resolvedChildren) {
+        child.onAppend?.();
+        if (child.autofocus) child.focus();
+      }
+    };
     return this;
   },
 
@@ -27,11 +35,13 @@ export const bindProto = {
   },
   // to skip setAttribute
   is: {},
+  keydown: {},
 };
 
 export const createElement = (tag, attributes = {}) => {
   const elm = document.createElement(tag);
   Object.assign(elm, bindProto);
+  elm.onkeydown = (e) => elm.keydown[e.key.toLowerCase()]?.(e);
   for (const [key, value] of Object.entries(attributes)) {
     if (value instanceof State) {
       value.register(() => elm.setAttr(key, value.value));

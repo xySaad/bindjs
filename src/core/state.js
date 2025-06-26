@@ -52,7 +52,12 @@ export class List extends State {
     }
     const refIdx = ref(this.value.length);
     this.#idx.push(refIdx);
-    this.#parentNode?.add(this.#component(px, refIdx));
+    if (this.#parentNode) {
+      const elm = this.#component(px, refIdx);
+      // use append instead of add to not trigger onAppend
+      this.#parentNode.append(elm);
+      elm.onAppend?.();
+    }
     this.value.push(px);
     this.trigger();
   }
@@ -64,6 +69,8 @@ export class List extends State {
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
+    console.log(index);
+    
     this.#parentNode?.children[index].remove();
     for (let i = index; i < this.#idx.length; i++) {
       const idxRef = this.#idx[i];
@@ -86,7 +93,9 @@ export class List extends State {
     this.#parentNode = parentNode;
     this.#component = component;
     this.value.forEach((item, i) => {
-      parentNode.add(component(item, this.#idx[i]));
+      const child = component(item, this.#idx[i])
+      parentNode.append(child);
+      child.onAppend?.()
     });
   }
 }
