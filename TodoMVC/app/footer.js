@@ -1,6 +1,6 @@
-import { A } from "../../src/html/custom/anchor.js";
-import html, { bindAs } from "../src/index.js";
+import html, { bindAs, A } from "rbind";
 import { clearAll, todosInView, todoList } from "./context/todos.js";
+
 const { footer, li, span, ul, button } = html;
 
 export const Footer = () => {
