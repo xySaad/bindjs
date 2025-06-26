@@ -5,7 +5,6 @@ export class Router {
   constructor() {
     this.routes = new Map();
     this.currentPath = location.pathname;
-
     window.addEventListener("DOMContentLoaded", () => {
       this.render();
     });
