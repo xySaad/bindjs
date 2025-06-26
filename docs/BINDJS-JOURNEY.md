@@ -15,7 +15,7 @@ So, I thought: _why not make wrappers for the functions I use the most?_
 ### Base wrapper:
 
 ```jsx
-export const createBindElement = (tagName, className, textContent) => {
+export const createElement = (tagName, className, textContent) => {
   const element = document.createElement(tagName);
   element.className = className ?? "";
   element.textContent = textContent ?? "";
@@ -27,14 +27,14 @@ export const createBindElement = (tagName, className, textContent) => {
 
 ```jsx
 export const div = (className, textContent) =>
-  createBindElement("div", className, textContent);
+  createElement("div", className, textContent);
 ```
 
 ### And an anchor (`<a>`) helper:
 
 ```jsx
 export const a = (href, child) => {
-  const aElement = createBindElement("a");
+  const aElement = createElement("a");
   aElement.href = href;
   aElement.append(child);
   return aElement;
@@ -111,14 +111,14 @@ app.append(
 );
 ```
 
-The issue? `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `createBindElement`:
+The issue? `Element.append()` returns `undefined`, so you can’t chain it. The fix is to add a custom `.add()` method to elements created through `createElement`:
 
 ---
 
 ### Making .append() Chainable with .add()
 
 ```diff
-export const createBindElement = (tagName, className, textContent) => {
+export const createElement = (tagName, className, textContent) => {
   const element = document.createElement(tagName);
   element.className = className ?? "";
   element.textContent = textContent ?? "";
@@ -139,12 +139,12 @@ Here’s a working [example app](/examples/coffeeList) that demonstrates the app
 
 ## Reactivity
 
-First we will update the `createBindElement` function for better flexebilty
+First we will update the `createElement` function for better flexebilty
 
 ```js
-export const createBindElement = (tagName, attributes = {}) => {
+export const createElement = (tagName, attributes = {}) => {
   const element = document.createElement(tagName);
-  element.add = asyncAppend;
+  element.add = ...;
   if (key in element) {
     // attaching events and element properties
     element[key] = value;
@@ -156,7 +156,6 @@ export const createBindElement = (tagName, attributes = {}) => {
 };
 ```
 
-See line 3 in [/src/html/native.js](/src/html/native.js) for the implementation of `asyncAppend`
 
 #### Binding variables to DOM elements
 
