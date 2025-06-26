@@ -1,4 +1,4 @@
-import html, { state } from "../src/index.js";
+import html, { state } from "rbind";
 const { div, h1, header, input, label } = html;
 export const Header = (filtred) => {
   const value = state("");

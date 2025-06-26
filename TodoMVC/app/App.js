@@ -2,7 +2,7 @@ import { Footer } from "./footer.js";
 import { Main } from "./main.js";
 import { Header } from "./header.js";
 import { getFilterFunc, todoList } from "./context/todos.js";
-import html, { list } from "../src/index.js";
+import html, { list } from "rbind";
 const { section } = html;
 export const App = () => {
   const filtred = list(todoList.value.filter(getFilterFunc()));

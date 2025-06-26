@@ -1,5 +1,5 @@
-import { A } from "../../src/html/custom/anchor.js";
-import html, { bindAs } from "../src/index.js";
+import { A } from "rbind";
+import html, { bindAs } from "rbind";
 import { clearAll, todoList } from "./context/todos.js";
 const { footer, li, span, ul, button } = html;
 

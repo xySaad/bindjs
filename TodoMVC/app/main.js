@@ -1,4 +1,4 @@
-import html, { state } from "../src/index.js";
+import html, { state } from "rbind";
 import { Task } from "./components/TodoTask.js";
 import { getFilterFunc, todoList, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;

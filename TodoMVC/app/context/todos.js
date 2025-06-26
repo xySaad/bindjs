@@ -1,4 +1,4 @@
-import { list, router } from "../../src/index.js";
+import { list, router } from "rbind";
 
 export const todoList = list([]);
 

@@ -1,4 +1,4 @@
-import html, { bind, bindAs } from "../../src/index.js";
+import html, { bind, bindAs } from "rbind";
 
 const { button, div, input, label, li } = html;
 export const Task = (filtred, item, idx) => {
