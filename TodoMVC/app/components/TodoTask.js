@@ -28,7 +28,7 @@ export const Task = (item, idx) => {
             keydown: {
               enter: (e) => {
                 const text = e.target.value;
-                if (text.trim().length > 0) {
+                if (text.trim().length > 1) {
                   item.value = e.target.value;
                 }
                 isWritable.value = false;
