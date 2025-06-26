@@ -11,9 +11,10 @@ export const Task = (item, idx) => {
   const isWritable = state(false);
 
   return li({
-    className: checked.value ? "completed" : "",
+    "className": {
+      completed: checked,
+    },
     "data-testid": "todo-item",
-    "data-chcked": bindAs(checked),
   }).add(
     div({ className: "view" }).add((w, c) =>
       c(() => w(isWritable))

@@ -64,6 +64,27 @@ export const createElement = (tag, attributes = {}) => {
       }
 
       elm.setAttr(key, temp.join(" "));
+    } else if (key === "className" && typeof value === "object" && value !== null) {
+      for (const className in value) {
+        const stateToWatch = value[className];
+
+        if (stateToWatch instanceof State) {
+          if (stateToWatch.value) {
+            elm.classList.add(className);
+          } else {
+            elm.classList.remove(className);
+          }
+          stateToWatch.register((newValue) => {
+            if (newValue) {
+              elm.classList.add(className);
+            } else {
+              elm.classList.remove(className);
+            }
+          });
+        } else {
+          console.warn(`Value for data-bind-class "${className}" is not a State object.`, stateToWatch);
+        }
+      }
     } else {
       elm.setAttr(key, value);
     }
