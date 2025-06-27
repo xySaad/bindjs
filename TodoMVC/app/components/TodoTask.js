@@ -1,5 +1,5 @@
 import html, { bind, bindAs, state } from "rbind";
-import { todosInView } from "../context/todos.js";
+import { todoList, todosInView } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
 export const Task = (item, idx) => {
@@ -7,13 +7,15 @@ export const Task = (item, idx) => {
   // @bind checked = item.checked
   // @bind checked from item
 
-  const checked = bind(item, "checked");
+  const checked = item.checked
+  checked.register(() => todoList.trigger())
   const isWritable = state(false);
 
   return li({
-    className: checked.value ? "completed" : "",
+    "className": {
+      completed: checked,
+    },
     "data-testid": "todo-item",
-    "data-chcked": bindAs(checked),
   }).add(
     div({ className: "view" }).add((w, c) =>
       c(() => w(isWritable))

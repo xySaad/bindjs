@@ -18,7 +18,8 @@ export const Header = () => {
         is: { value },
         onkeyup: (e) => {
           if (e.key == "Enter" && value.value.trim().length >1) {
-            todosInView.push({ value: value.value, checked: false });
+            todosInView.push({ value: value.value, checked: state(false) });
+
             value.value = "";
           }
         },
