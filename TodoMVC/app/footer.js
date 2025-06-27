@@ -4,7 +4,7 @@ import { clearAll, todosInView, todoList } from "./context/todos.js";
 const { footer, li, span, ul, button } = html;
 
 export const Footer = () => {
-  const active = bindAs(todoList, "filter", (i) => !i.checked);
+  const active = bindAs(todoList, "filter", (i) => !i.checked.value);
 
   return footer({ className: "footer", "date-testid": "footer" }).add(
     (w, c) => {      
