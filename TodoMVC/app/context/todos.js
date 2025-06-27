@@ -17,9 +17,9 @@ export const getFilterFunc = () => {
 export const todosInView = todoList.derive();
 
 export const clearAll = () => {
-  for (let i = 0; i < todosInView.value.length; ) {
-    if (todosInView.value[i].checked.value) {
-      todosInView.remove(i);
+  for (let i = 0; i < todoList.value.length; ) {
+    if (todoList.value[i].checked.value) {
+      todoList.remove(i);
     } else {
       i++;
     }
@@ -27,8 +27,8 @@ export const clearAll = () => {
 };
 
 export const toggleAll = (checked) => {
-  todoList.value.forEach((t) => {
+  todosInView.value.forEach((t) => {
     t.checked.value = checked;
   });
-  todoList.trigger()
+  todoList.trigger();
 };
