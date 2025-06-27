@@ -1,5 +1,6 @@
-import html, { state } from "../src/index.js";
+import html, { state } from "rbind";
 import { todosInView } from "./context/todos.js";
+
 const { div, h1, header, input, label } = html;
 export const Header = () => {
   const value = state("");

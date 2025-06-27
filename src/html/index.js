@@ -8,3 +8,4 @@ for (const tag of tags) {
 }
 
 export default html;
+export * from "./custom/index.js";

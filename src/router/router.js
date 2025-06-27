@@ -1,5 +1,4 @@
-import html from "../html/index.js";
-const { div } = html;
+import { createElement } from "../core/createElement.js";
 
 export class Router {
   constructor() {
@@ -17,13 +16,13 @@ export class Router {
 
     if (!callback) {
       console.error("no callback for the route ", path);
-      callback = () => div({ textContent: "404" });
+      callback = () => createElement("h1", { textContent: "404" });
       return;
     }
     document.body.innerHTML = "";
-    const elm = callback()
+    const elm = callback();
     document.body.append(elm);
-    elm.onAppend()
+    elm.onAppend();
   }
 
   SetRoute(path, handler) {
