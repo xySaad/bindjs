@@ -1,8 +1,8 @@
+import { createElement } from "../../core/createElement.js";
 import { router } from "../../router/router.js";
-import html from "../index.js";
 
 export const A = (className, href, label) =>
-  html.a({
+  createElement("a", {
     class: className,
     href,
     textContent: label,
