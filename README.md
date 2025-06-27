@@ -8,7 +8,10 @@ npx rbind my-app
 cd my-app
 npm i
 ```
-
+And to start it in dev mode:
+```sh
+npm run dev
+```
 # Usage:
 
 ### App mounting:
