@@ -69,7 +69,6 @@ export class List extends State {
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
-    console.log(index);
     
     this.#parentNode?.children[index].remove();
     for (let i = index; i < this.#idx.length; i++) {
