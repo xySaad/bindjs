@@ -26,7 +26,6 @@ export const When = (effect) => {
   let active = initalValue || document.createTextNode("");
   const trigger = (props) => {
     return (stateValue) => {
-      console.log(props);
       let hasChanged = typeof stateValue === "object" ? false : true;
       for (const key in props) {
         const value = stateValue[key];
