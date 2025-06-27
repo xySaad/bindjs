@@ -69,7 +69,7 @@ export class List extends State {
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
-    
+
     this.#parentNode?.children[index].remove();
     for (let i = index; i < this.#idx.length; i++) {
       const idxRef = this.#idx[i];
@@ -82,6 +82,15 @@ export class List extends State {
     derivedList.#synced.push({ list: this, filter });
     return derivedList;
   }
+  purge(predicate) {
+    for (let i = 0; i < this.value.length; ) {
+      if (predicate(this.value[i])) {
+        this.remove(i);
+      } else {
+        i++;
+      }
+    }
+  }
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
   // and create a list for each call of .map
@@ -92,9 +101,9 @@ export class List extends State {
     this.#parentNode = parentNode;
     this.#component = component;
     this.value.forEach((item, i) => {
-      const child = component(item, this.#idx[i])
+      const child = component(item, this.#idx[i]);
       parentNode.append(child);
-      child.onAppend?.()
+      child.onAppend?.();
     });
   }
 }

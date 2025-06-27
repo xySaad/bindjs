@@ -7,9 +7,9 @@ export const getFilterFunc = () => {
     case "/":
       return () => true;
     case "/active":
-      return (t) => !t.checked.value;
+      return (t) => !t.checked;
     case "/completed":
-      return (t) => t.checked.value;
+      return (t) => t.checked;
     default:
       throw new Error("wtf?, how did you get here?!");
   }
@@ -17,18 +17,12 @@ export const getFilterFunc = () => {
 export const todosInView = todoList.derive();
 
 export const clearAll = () => {
-  for (let i = 0; i < todoList.value.length; ) {
-    if (todoList.value[i].checked.value) {
-      todoList.remove(i);
-    } else {
-      i++;
-    }
-  }
+  todosInView.purge((v) => v.checked.value);
+  todoList.purge((v) => v.checked.value);
 };
 
 export const toggleAll = (checked) => {
   todosInView.value.forEach((t) => {
     t.checked.value = checked;
   });
-  todoList.trigger();
 };
