@@ -29,7 +29,7 @@ export const Main = () => {
     (w, c) => c(() => w(todoList).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
       todosInView,
-      (item, idx) => filter(item) && Task(item, idx)
+      (item, idx) => filter(item) ? Task(item, idx) : ""
     )
   );
 };
