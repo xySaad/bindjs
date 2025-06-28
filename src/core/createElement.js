@@ -20,9 +20,9 @@ export const bindProto = {
     return this;
   },
 
-  bind: function (list, callback) {
+  bind: function (list, callback, filter) {
     if (!(list instanceof List)) return;
-    list.bind(this, callback);
+    list.bind(this, callback, filter);
     return this;
   },
 
@@ -64,7 +64,11 @@ export const createElement = (tag, attributes = {}) => {
       }
 
       elm.setAttr(key, temp.join(" "));
-    } else if (key === "className" && typeof value === "object" && value !== null) {
+    } else if (
+      key === "className" &&
+      typeof value === "object" &&
+      value !== null
+    ) {
       for (const className in value) {
         const stateToWatch = value[className];
 
@@ -82,7 +86,10 @@ export const createElement = (tag, attributes = {}) => {
             }
           });
         } else {
-          console.warn(`Value for data-bind-class "${className}" is not a State object.`, stateToWatch);
+          console.warn(
+            `Value for data-bind-class "${className}" is not a State object.`,
+            stateToWatch
+          );
         }
       }
     } else {

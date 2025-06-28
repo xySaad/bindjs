@@ -17,8 +17,8 @@ export const Header = () => {
         placeholder: "What needs to be done?",
         is: { value },
         onkeyup: (e) => {
-          if (e.key == "Enter" && value.value.trim().length >1) {
-            todosInView.push({ value: value.value, checked: state(false) });
+          if (e.key == "Enter" && value.value.trim().length > 1) {
+            todosInView.push({ value: value.value, checked: false  });
 
             value.value = "";
           }

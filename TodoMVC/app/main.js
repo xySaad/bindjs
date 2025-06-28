@@ -1,15 +1,10 @@
 import html, { bindAs } from "rbind";
 import { Task } from "./components/TodoTask.js";
-import {
-  todosInView,
-  getFilterFunc,
-  todoList,
-  toggleAll,
-} from "./context/todos.js";
+import { todosInView, getFilterFunc, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
-  const checked = bindAs(todosInView, "every", (todo) => todo.completed);
+  const checked = bindAs(todosInView, "every", (todo) => todo.checked);
 
   return div({ className: "toggle-all-container" }).add(
     input({
@@ -18,7 +13,7 @@ const checkAllItems = () => {
       id: "toggle-all",
       "data-testid": "toggle-all",
       is: { checked },
-      onclick: () => toggleAll(checked),
+      onclick: () => toggleAll(!checked.value),
     }),
     label({
       className: "toggle-all-label",
@@ -31,10 +26,11 @@ const checkAllItems = () => {
 export const Main = () => {
   const filter = getFilterFunc();
   return main({ className: "main", "data-testid": "main" }).add(
-    (w, c) => c(() => w(todoList).length > 0) && checkAllItems(),
+    (w, c) => c(() => w(todosInView).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
       todosInView,
-      (item, idx) => (filter(item) ? Task(item, idx) : "")
+      Task,
+      filter
     )
   );
 };

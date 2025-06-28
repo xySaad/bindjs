@@ -17,12 +17,12 @@ export const getFilterFunc = () => {
 export const todosInView = todoList.derive();
 
 export const clearAll = () => {
-  todosInView.purge((v) => v.checked.value);
-  todoList.purge((v) => v.checked.value);
+  todosInView.purge((v) => v.checked);
+  todoList.purge((v) => v.checked);
 };
 
 export const toggleAll = (checked) => {
   todosInView.value.forEach((t) => {
-    t.checked.value = checked;
+    t.checked = checked;
   });
 };

@@ -1,64 +1,64 @@
-import html, { bind, bindAs, state } from "rbind";
-import { todoList, todosInView } from "../context/todos.js";
+import html, { bind, state } from "rbind";
+import { todosInView } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
-export const Task = (item, idx) => {
+export const Task = (item, idx, ctx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
 
-  const checked = item.checked
-  checked.register(() => todoList.trigger())
+  ctx.checked = bind(item, "checked");
+
   const isWritable = state(false);
 
   return li({
-    "className": {
-      completed: checked,
+    className: {
+      completed: ctx.checked,
     },
     "data-testid": "todo-item",
   }).add(
     div({ className: "view" }).add((w, c) =>
       c(() => w(isWritable))
         ? div({ class: "input-container" }).add(
-          input({
-            className: "new-todo",
-            id: "todo-input",
-            type: "text",
-            "data-testid": "text-input",
-            autoFocus: true,
-            value: item.value,
-            keydown: {
-              enter: (e) => {
-                const text = e.target.value;
-                if (text.trim().length > 1) {
-                  item.value = e.target.value;
-                }
-                isWritable.value = false;
+            input({
+              className: "new-todo",
+              id: "todo-input",
+              type: "text",
+              "data-testid": "text-input",
+              autoFocus: true,
+              value: item.value,
+              keydown: {
+                enter: (e) => {
+                  const text = e.target.value;
+                  if (text.trim().length > 1) {
+                    item.value = e.target.value;
+                  }
+                  isWritable.value = false;
+                },
               },
-            },
-            onblur: () => (isWritable.value = false),
-          }),
-          label({ class: "visually-hidden", htmlFor: "todo-input" })
-        )
+              onblur: () => (isWritable.value = false),
+            }),
+            label({ class: "visually-hidden", htmlFor: "todo-input" })
+          )
         : div().add(
-          input({
-            className: "toggle",
-            checked,
-            type: "checkbox",
-            "data-testid": "todo-item-toggle",
-            is: { checked },
-          }),
-          label({
-            "data-testid": "todo-item-label",
-            textContent: item.value,
-            ondblclick: () => (isWritable.value = true),
-          }),
-          button({
-            className: "destroy",
-            "data-testid": "todo-item-button",
-            onclick: () => todosInView.remove(idx()),
-          })
-        )
+            input({
+              className: "toggle",
+              checked: ctx.checked,
+              type: "checkbox",
+              "data-testid": "todo-item-toggle",
+              is: { checked: ctx.checked },
+            }),
+            label({
+              "data-testid": "todo-item-label",
+              textContent: item.value,
+              ondblclick: () => (isWritable.value = true),
+            }),
+            button({
+              className: "destroy",
+              "data-testid": "todo-item-button",
+              onclick: () => todosInView.remove(idx()),
+            })
+          )
     )
   );
 };
