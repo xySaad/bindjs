@@ -13,6 +13,7 @@ export const bindAs = (stateToTrack, prop, callback) => {
     if (callback) newValue = newValue.call(v, callback);
     return newValue;
   };
+  
   const st = state(resolveDerivedStateValue(stateToTrack.value));
   stateToTrack.register((v) => (st.value = resolveDerivedStateValue(v)));
   return st;

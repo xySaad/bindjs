@@ -1,6 +1,7 @@
-import { list, router } from "rbind";
+import { BetterList, router } from "rbind";
+import { ref } from "rbind";
 
-export const todoList = list([]);
+export const todoList = new BetterList([]);
 
 export const getFilterFunc = () => {
   switch (router.currentPath) {
@@ -14,15 +15,14 @@ export const getFilterFunc = () => {
       throw new Error("wtf?, how did you get here?!");
   }
 };
-export const todosInView = todoList.derive();
+export const displayedTodos = ref(null);
 
 export const clearAll = () => {
-  todosInView.purge((v) => v.checked);
   todoList.purge((v) => v.checked);
 };
 
 export const toggleAll = (checked) => {
-  todosInView.value.forEach((t) => {
+  displayedTodos().value.forEach((t) => {
     t.checked = checked;
   });
 };

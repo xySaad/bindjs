@@ -1,19 +1,20 @@
 import html, { bind, state } from "rbind";
-import { todosInView } from "../context/todos.js";
+import { displayedTodos, todoList } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
-export const Task = (item, idx, ctx) => {
+
+export const TestTask = (item, idx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
 
-  ctx.checked = bind(item, "checked");
+  const checked = bind(item, "checked");
 
   const isWritable = state(false);
 
   return li({
     className: {
-      completed: ctx.checked,
+      completed: checked,
     },
     "data-testid": "todo-item",
   }).add(
@@ -26,12 +27,12 @@ export const Task = (item, idx, ctx) => {
               type: "text",
               "data-testid": "text-input",
               autoFocus: true,
-              value: item.value,
+              value: item.title,
               keydown: {
                 enter: (e) => {
                   const text = e.target.value;
                   if (text.trim().length > 1) {
-                    item.value = e.target.value;
+                    item.title = e.target.value;
                   }
                   isWritable.value = false;
                 },
@@ -43,20 +44,20 @@ export const Task = (item, idx, ctx) => {
         : div().add(
             input({
               className: "toggle",
-              checked: ctx.checked,
+              checked,
               type: "checkbox",
               "data-testid": "todo-item-toggle",
-              is: { checked: ctx.checked },
+              is: { checked },
             }),
             label({
               "data-testid": "todo-item-label",
-              textContent: item.value,
+              textContent: item.title,
               ondblclick: () => (isWritable.value = true),
             }),
             button({
               className: "destroy",
               "data-testid": "todo-item-button",
-              onclick: () => todosInView.remove(idx()),
+              onclick: () => todoList.remove(idx()),
             })
           )
     )

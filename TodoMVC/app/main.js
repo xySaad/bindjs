@@ -1,10 +1,10 @@
-import html, { bindAs } from "rbind";
-import { Task } from "./components/TodoTask.js";
-import { todosInView, getFilterFunc, toggleAll } from "./context/todos.js";
+import html, { BetterList, bindAs } from "rbind";
+import { TestTask } from "./components/TodoTask.js";
+import { displayedTodos, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
-  const checked = bindAs(todosInView, "every", (todo) => todo.checked);
+  const checked = bindAs(displayedTodos(), "every", (todo) => todo.checked);
 
   return div({ className: "toggle-all-container" }).add(
     input({
@@ -21,16 +21,13 @@ const checkAllItems = () => {
       textContent: "Toggle All Input",
     })
   );
-};
+}
 
 export const Main = () => {
-  const filter = getFilterFunc();
   return main({ className: "main", "data-testid": "main" }).add(
-    (w, c) => c(() => w(todosInView).length > 0) && checkAllItems(),
-    ul({ className: "todo-list", "data-testid": "todo-list" }).bind(
-      todosInView,
-      Task,
-      filter
+    (w, c) => c(() => w(displayedTodos()).length > 0) && checkAllItems(),
+    ul({ className: "todo-list", "data-testid": "todo-list" }).add(
+      displayedTodos().map(TestTask)
     )
   );
 };

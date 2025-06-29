@@ -1,9 +1,9 @@
 import html, { state } from "rbind";
-import { todosInView } from "./context/todos.js";
+import { todoList } from "./context/todos.js";
 
 const { div, h1, header, input, label } = html;
 export const Header = () => {
-  const value = state("");
+  const title = state("");
 
   return header({ className: "header", "date-testid": "header" }).add(
     h1({ textContent: "todos" }),
@@ -15,12 +15,11 @@ export const Header = () => {
         type: "text",
         "data-testid": "text-input",
         placeholder: "What needs to be done?",
-        is: { value },
+        is: { value: title },
         onkeyup: (e) => {
-          if (e.key == "Enter" && value.value.trim().length > 1) {
-            todosInView.push({ value: value.value, checked: false  });
-
-            value.value = "";
+          if (e.key == "Enter" && title.value.trim().length > 1) {
+            todoList.push({ title: title.value, checked: false  });
+            title.value = "";
           }
         },
       }),
