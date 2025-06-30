@@ -1,5 +1,5 @@
 import html, { bind, state } from "rbind";
-import { displayedTodos, todoList } from "../context/todos.js";
+import { todoList } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;
 
@@ -7,7 +7,6 @@ export const TestTask = (item, idx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
-
   const checked = bind(item, "checked");
 
   const isWritable = state(false);
@@ -57,7 +56,11 @@ export const TestTask = (item, idx) => {
             button({
               className: "destroy",
               "data-testid": "todo-item-button",
-              onclick: () => todoList.remove(idx()),
+              onclick: () => {
+                const index = todoList.value.indexOf(item);
+                console.log(todoList.value[idx()] === item);
+                todoList.remove(index);
+              },
             })
           )
     )

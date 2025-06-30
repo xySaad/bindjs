@@ -1,4 +1,4 @@
-import html, { BetterList, bindAs } from "rbind";
+import html, { bindAs } from "rbind";
 import { TestTask } from "./components/TodoTask.js";
 import { displayedTodos, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
@@ -21,7 +21,7 @@ const checkAllItems = () => {
       textContent: "Toggle All Input",
     })
   );
-}
+};
 
 export const Main = () => {
   return main({ className: "main", "data-testid": "main" }).add(

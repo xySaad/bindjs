@@ -1,10 +1,37 @@
 import { State } from "../index.js";
 import { ref } from "./reference.js";
 
+const proxiesCache = new WeakMap()
 export class BetterList extends State {
   #computedLists = [];
   #DOMLists = [];
   #idx = [];
+  constructor(defaultValue) {
+    super(defaultValue);
+    this.#idx = defaultValue.map((_, i) => ref(i));
+  }
+
+  #batching = false;
+  #triggerRequested = false;
+  trigger() {
+    if (this.#batching) {
+      this.#triggerRequested = true;
+      return;
+    }
+    super.trigger();
+  }
+  #beginBatch() {
+    this.#batching = true;
+  }
+
+  #endBatch() {
+    this.#batching = false;
+    if (this.#triggerRequested) {
+      super.trigger();
+      this.#triggerRequested = false;
+    }
+  }
+
   filter(predicate) {
     const computedList = new DerivedList(this, predicate);
     this.#computedLists.push(computedList);
@@ -19,12 +46,11 @@ export class BetterList extends State {
       end.before(child);
       child.onAppend?.();
     }
-    for (const list of this.#computedLists) list.push(item);
+    for (const list of this.#computedLists) list.pushFromSrc(item, refIdx());
     this.trigger();
+    return refIdx;
   }
   remove(index) {
-    console.log(this.value, index);
-
     for (const { start, end, callback } of this.#DOMLists) {
       let next = start.nextSibling;
       let count = 0;
@@ -40,7 +66,7 @@ export class BetterList extends State {
       const refIdx = this.#idx[i];
       refIdx((prev) => prev - 1);
     }
-    for (const list of this.#computedLists) list.remove(index);
+    for (const list of this.#computedLists) list.removeBySrcIndex(index);
 
     this.trigger();
   }
@@ -52,9 +78,7 @@ export class BetterList extends State {
     this.#DOMLists.push({ start, end, callback });
     for (let i = 0; i < this.value.length; i++) {
       const item = this.value[i];
-      const refIdx = ref(i);
-      this.#idx.push(refIdx);
-      end.before(callback(item, refIdx));
+      end.before(callback(item, this.#idx[i]));
     }
 
     frag.onAppend = () => {
@@ -67,14 +91,52 @@ export class BetterList extends State {
     };
     return frag;
   }
+  purge(predicate) {
+    this.#beginBatch();
+    for (let i = 0; i < this.value.length; ) {
+      if (predicate(this.value[i], i)) {
+        this.remove(i);
+      } else {
+        i++;
+      }
+    }
+    this.#endBatch();
+  }
 }
+
 export class DerivedList extends BetterList {
   #filter = null;
+  #mirroredRefIdx = [];
+
   constructor(originalList, filter) {
-    super(originalList.value.filter(filter));
+    const filteredItems = [];
+    super(filteredItems);
     this.#filter = filter;
+
+    for (let i = 0; i < originalList.value.length; i++) {
+      const item = originalList.value[i];
+      if (filter(item)) {
+        const refIdx = super.push(item);
+        this.#mirroredRefIdx[i] = refIdx;
+      } else {
+        this.#mirroredRefIdx[i] = null;
+      }
+    }
   }
-  push(item) {
-    if (this.#filter(item)) super.push(item);
+
+  pushFromSrc(item, srcIdx) {
+    let refIdx = null;
+    if (this.#filter(item)) {
+      refIdx = super.push(item);
+    }
+    this.#mirroredRefIdx[srcIdx] = refIdx;
+  }
+
+  removeBySrcIndex(index) {
+    const refIdx = this.#mirroredRefIdx[index];
+    if (refIdx != null) {
+      this.remove(refIdx());
+    }
+    this.#mirroredRefIdx.splice(index, 1);
   }
 }
