@@ -1,6 +1,7 @@
 import { State } from "../index.js";
 import { ref } from "./reference.js";
 
+const proxyCache = new WeakMap();
 export class BetterList extends State {
   #computedLists = [];
   #DOMLists = [];
@@ -36,19 +37,37 @@ export class BetterList extends State {
     this.#computedLists.push(computedList);
     return computedList;
   }
+  #getProxy(item) {
+    const isProxy = proxyCache.get(item);
+
+    if (isProxy) return item;
+
+    const proxiedItem = new Proxy(item, {
+      set: (target, prop, value) => {
+        target[prop] = value;
+        this.trigger();
+        return true;
+      },
+    });
+    proxyCache.set(proxiedItem, true);
+
+    return proxiedItem;
+  }
   push(...items) {
     const refIndices = [];
     const children = Array(this.#DOMLists.length).fill(Array(items.length));
 
     for (const [itemIdx, item] of items.entries()) {
-      this.value.push(item);
+      const proxiedItem = this.#getProxy(item);
+      this.value.push(proxiedItem);
       const refIdx = ref(this.value.length - 1);
       refIndices.push(refIdx);
       this.#idx.push(refIdx);
       for (const [listIdx, { callback }] of this.#DOMLists.entries()) {
-        children[listIdx][itemIdx] = callback(item, refIdx);
+        children[listIdx][itemIdx] = callback(proxiedItem, refIdx);
       }
-      for (const list of this.#computedLists) list.pushFromSrc(item, refIdx());
+      for (const list of this.#computedLists)
+        list.pushFromSrc(proxiedItem, refIdx());
     }
     for (const [listIdx, { end }] of this.#DOMLists.entries()) {
       end.before(...children[listIdx]);
@@ -131,7 +150,7 @@ export class DerivedList extends BetterList {
 
     this.#mirroredRefIdx = Array(originalList.value.length).fill(null);
     const refIdxArray = super.push(...filteredItems);
-    
+
     refIdxArray.forEach((refIdx, i) => {
       const srcIdx = srcIndexForItem[i];
       this.#mirroredRefIdx[srcIdx] = refIdx;
