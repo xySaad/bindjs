@@ -1,7 +1,6 @@
 import { State } from "../index.js";
 import { ref } from "./reference.js";
 
-const proxiesCache = new WeakMap()
 export class BetterList extends State {
   #computedLists = [];
   #DOMLists = [];
@@ -37,18 +36,26 @@ export class BetterList extends State {
     this.#computedLists.push(computedList);
     return computedList;
   }
-  push(item) {
-    this.value.push(item);
-    const refIdx = ref(this.value.length - 1);
-    this.#idx.push(refIdx);
-    for (const { end, callback } of this.#DOMLists) {
-      const child = callback(item, refIdx);
-      end.before(child);
-      child.onAppend?.();
+  push(...items) {
+    const refIndices = [];
+    const children = Array(this.#DOMLists.length).fill(Array(items.length));
+
+    for (const [itemIdx, item] of items.entries()) {
+      this.value.push(item);
+      const refIdx = ref(this.value.length - 1);
+      refIndices.push(refIdx);
+      this.#idx.push(refIdx);
+      for (const [listIdx, { callback }] of this.#DOMLists.entries()) {
+        children[listIdx][itemIdx] = callback(item, refIdx);
+      }
+      for (const list of this.#computedLists) list.pushFromSrc(item, refIdx());
     }
-    for (const list of this.#computedLists) list.pushFromSrc(item, refIdx());
+    for (const [listIdx, { end }] of this.#DOMLists.entries()) {
+      end.before(...children[listIdx]);
+      children[listIdx].forEach((child) => child.onAppend?.());
+    }
     this.trigger();
-    return refIdx;
+    return refIndices;
   }
   remove(index) {
     for (const { start, end, callback } of this.#DOMLists) {
@@ -109,25 +116,32 @@ export class DerivedList extends BetterList {
   #mirroredRefIdx = [];
 
   constructor(originalList, filter) {
-    const filteredItems = [];
-    super(filteredItems);
+    super([]);
     this.#filter = filter;
 
-    for (let i = 0; i < originalList.value.length; i++) {
-      const item = originalList.value[i];
+    const filteredItems = [];
+    const srcIndexForItem = [];
+
+    originalList.value.forEach((item, i) => {
       if (filter(item)) {
-        const refIdx = super.push(item);
-        this.#mirroredRefIdx[i] = refIdx;
-      } else {
-        this.#mirroredRefIdx[i] = null;
+        filteredItems.push(item);
+        srcIndexForItem.push(i);
       }
-    }
+    });
+
+    this.#mirroredRefIdx = Array(originalList.value.length).fill(null);
+    const refIdxArray = super.push(...filteredItems);
+    
+    refIdxArray.forEach((refIdx, i) => {
+      const srcIdx = srcIndexForItem[i];
+      this.#mirroredRefIdx[srcIdx] = refIdx;
+    });
   }
 
   pushFromSrc(item, srcIdx) {
     let refIdx = null;
     if (this.#filter(item)) {
-      refIdx = super.push(item);
+      [refIdx] = super.push(item);
     }
     this.#mirroredRefIdx[srcIdx] = refIdx;
   }
