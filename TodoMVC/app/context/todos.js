@@ -1,4 +1,4 @@
-import { BetterList, router } from "rbind";
+import { BetterList, router, state } from "rbind";
 import { ref } from "rbind";
 
 export const todoList = new BetterList([]);
@@ -22,7 +22,7 @@ export const clearAll = () => {
 };
 
 export const toggleAll = (checked) => {
-  displayedTodos().value.forEach((t) => {
+  [...displayedTodos().value].forEach((t) => {
     t.checked = checked;
   });
 };
