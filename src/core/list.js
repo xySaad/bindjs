@@ -114,8 +114,8 @@ export class BetterList extends State {
     this.trigger();
   }
   map(callback) {
-    const start = document.createComment("start");
-    const end = document.createComment("end");
+    const start = document.createTextNode("");
+    const end = document.createTextNode("");
     const frag = document.createDocumentFragment();
     frag.append(start, end);
     this.#DOMLists.push({ start, end, callback });
