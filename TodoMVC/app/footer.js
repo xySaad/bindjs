@@ -17,17 +17,17 @@ export const Footer = () => {
       });
     },
     ul({ className: "filters", "data-testid": "footer-navigaion" }).add(
-      li().add(A(router.currentPath === "/" ? "selected" : "", "/", "All")),
+      li().add(A(router.path.value === "/" ? "selected" : "", "/", "All")),
       li().add(
         A(
-          router.currentPath === "/active" ? "selected" : "",
+          router.path.value === "/active" ? "selected" : "",
           "/active",
           "Active"
         )
       ),
       li().add(
         A(
-          router.currentPath === "/completed" ? "selected" : "",
+          router.path.value === "/completed" ? "selected" : "",
           "/completed",
           "Completed"
         )

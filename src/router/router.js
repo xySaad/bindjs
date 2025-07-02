@@ -1,28 +1,33 @@
 import { createElement } from "../core/createElement.js";
+import { state } from "../core/state.js";
 
 export class Router {
+  #dependecies = [];
   constructor() {
     this.routes = new Map();
-    this.currentPath = location.pathname;
+    this.path = state(location.pathname);
 
     window.addEventListener("DOMContentLoaded", () => {
       this.render();
     });
   }
 
-  render() {
+  render(prevPath) {
     let path = location.pathname;
     let callback = this.routes.get(path);
 
     if (!callback) {
       console.error("no callback for the route ", path);
       callback = () => createElement("h1", { textContent: "404" });
-      return;
     }
-    document.body.innerHTML = "";
-    const elm = callback();
-    document.body.append(elm);
-    elm.onAppend();
+    const prevCallback = this.routes.get(prevPath);
+    if (callback !== prevCallback) {
+      document.body.innerHTML = "";
+      const elm = callback();
+      document.body.append(elm);
+      elm.onAppend();
+    }
+    for (const dep of this.#dependecies) dep();
   }
 
   SetRoute(path, handler) {
@@ -30,11 +35,15 @@ export class Router {
   }
 
   navigate(path) {
-    if (path != this.currentPath) {
+    if (path != this.path.value) {
+      const prevPath = this.path.value;
       history.pushState({}, null, path);
-      this.currentPath = location.pathname;
-      this.render();
+      this.path.value = location.pathname;
+      this.render(prevPath);
     }
+  }
+  register(dep) {
+    this.#dependecies.push(dep);
   }
 }
 export const router = new Router();

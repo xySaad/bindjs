@@ -4,7 +4,7 @@ import { ref } from "rbind";
 export const todoList = new BetterList([]);
 
 export const getFilterFunc = () => {
-  switch (router.currentPath) {
+  switch (router.path.value) {
     case "/":
       return () => true;
     case "/active":
@@ -15,14 +15,13 @@ export const getFilterFunc = () => {
       throw new Error("wtf?, how did you get here?!");
   }
 };
-export const displayedTodos = ref(null);
-
+export const displayedTodos = todoList.filter(getFilterFunc());
 export const clearAll = () => {
   todoList.purge((v) => v.checked);
 };
 
 export const toggleAll = (checked) => {
-  [...displayedTodos().value].forEach((t) => {
+  [...displayedTodos.value].forEach((t) => {
     t.checked = checked;
   });
 };

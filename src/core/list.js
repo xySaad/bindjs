@@ -150,10 +150,11 @@ export class BetterList extends State {
 export class DerivedList extends BetterList {
   #filter = null;
   #mirroredRefIdx = [];
-
+  #originalList = [];
   constructor(originalList, filter) {
     super([]);
     this.#filter = filter;
+    this.#originalList = originalList;
 
     const filteredItems = [];
     const srcIndexForItem = [];
@@ -197,5 +198,34 @@ export class DerivedList extends BetterList {
         this.#mirroredRefIdx[srcIdx] = null;
       }
     }
+  }
+
+  refine(newFilter) {
+    this.#filter = newFilter;
+
+    // Clear current filtered items efficiently
+    this.purge(() => true);
+
+    // Reset mirrored ref index tracking
+    this.#mirroredRefIdx = Array(this.#originalList.value.length).fill(null);
+
+    // Re-apply the new filter to original items
+    const filteredItems = [];
+    const srcIndexForItem = [];
+
+    this.#originalList.value.forEach((item, i) => {
+      if (this.#filter(item)) {
+        filteredItems.push(item);
+        srcIndexForItem.push(i);
+      }
+    });
+
+    // Add filtered items back
+    const refIdxArray = super.push(...filteredItems);
+
+    refIdxArray.forEach((refIdx, i) => {
+      const srcIdx = srcIndexForItem[i];
+      this.#mirroredRefIdx[srcIdx] = refIdx;
+    });
   }
 }

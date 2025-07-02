@@ -4,7 +4,7 @@ import { displayedTodos, toggleAll } from "./context/todos.js";
 const { div, input, label, main, ul } = html;
 
 const checkAllItems = () => {
-  const checked = bindAs(displayedTodos(), "every", (todo) => todo.checked);
+  const checked = bindAs(displayedTodos, "every", (todo) => todo.checked);
 
   return div({ className: "toggle-all-container" }).add(
     input({
@@ -25,9 +25,9 @@ const checkAllItems = () => {
 
 export const Main = () => {
   return main({ className: "main", "data-testid": "main" }).add(
-    (w, c) => c(() => w(displayedTodos()).length > 0) && checkAllItems(),
+    (w, c) => c(() => w(displayedTodos).length > 0) && checkAllItems(),
     ul({ className: "todo-list", "data-testid": "todo-list" }).add(
-      displayedTodos().map(TestTask)
+      displayedTodos.map(TestTask)
     )
   );
 };
