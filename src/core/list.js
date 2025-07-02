@@ -1,4 +1,4 @@
-import { State } from "../index.js";
+import { state, State } from "../index.js";
 import { ref } from "./reference.js";
 
 const proxyCache = new WeakMap();
@@ -41,14 +41,29 @@ export class BetterList extends State {
     const isProxy = proxyCache.get(item);
 
     if (isProxy) return item;
+    const ctx = {};
 
     const proxiedItem = new Proxy(item, {
       set: (target, prop, value) => {
         target[prop] = value;
+        if (prop in ctx && ctx[prop].value !== value) ctx[prop].value = value;
         this.trigger();
+        for (const list of this.#computedLists) list.trigger();
         return true;
       },
     });
+    proxiedItem.$ = new Proxy(
+      {},
+      {
+        get(_, prop) {
+          if (prop in ctx) return ctx[prop];
+          const st = state(proxiedItem[prop]);
+          st.register((v) => (proxiedItem[prop] = v));
+          ctx[prop] = st;
+          return st;
+        },
+      }
+    );
     proxyCache.set(proxiedItem, true);
 
     return proxiedItem;

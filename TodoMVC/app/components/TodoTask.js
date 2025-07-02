@@ -7,8 +7,7 @@ export const TestTask = (item, idx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
-  const checked = bind(item, "checked");
-
+  const checked = item.$.checked;
   const isWritable = state(false);
 
   return li({
