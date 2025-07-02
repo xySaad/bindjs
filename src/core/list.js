@@ -37,7 +37,7 @@ export class BetterList extends State {
     this.#computedLists.push(computedList);
     return computedList;
   }
-  #getProxy(item) {
+  #getProxy(item, refIdx) {
     const isProxy = proxyCache.get(item);
 
     if (isProxy) return item;
@@ -48,7 +48,9 @@ export class BetterList extends State {
         target[prop] = value;
         if (prop in ctx && ctx[prop].value !== value) ctx[prop].value = value;
         this.trigger();
-        for (const list of this.#computedLists) list.trigger();
+        for (const list of this.#computedLists) {
+          list.reEvaluate(proxiedItem, refIdx());
+        }
         return true;
       },
     });
@@ -73,9 +75,9 @@ export class BetterList extends State {
     const children = Array(this.#DOMLists.length).fill(Array(items.length));
 
     for (const [itemIdx, item] of items.entries()) {
-      const proxiedItem = this.#getProxy(item);
+      const refIdx = ref(this.value.length);
+      const proxiedItem = this.#getProxy(item, refIdx);
       this.value.push(proxiedItem);
-      const refIdx = ref(this.value.length - 1);
       refIndices.push(refIdx);
       this.#idx.push(refIdx);
       for (const [listIdx, { callback }] of this.#DOMLists.entries()) {
@@ -186,5 +188,14 @@ export class DerivedList extends BetterList {
       this.remove(refIdx());
     }
     this.#mirroredRefIdx.splice(index, 1);
+  }
+  reEvaluate(item, srcIdx) {
+    if (!this.#filter(item)) {
+      const refIdx = this.#mirroredRefIdx[srcIdx];
+      if (refIdx != null) {
+        this.remove(refIdx());
+        this.#mirroredRefIdx[srcIdx] = null;
+      }
+    }
   }
 }
