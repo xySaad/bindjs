@@ -10,6 +10,9 @@ export class Router {
     window.addEventListener("DOMContentLoaded", () => {
       this.render();
     });
+    window.addEventListener("popstate", () => {
+      this.navigate(location.pathname, true);
+    });
   }
 
   render(prevPath) {
@@ -34,11 +37,11 @@ export class Router {
     this.routes.set(path, handler);
   }
 
-  navigate(path) {
-    if (path != this.path.value) {
-      const prevPath = this.path.value;
-      history.pushState({}, null, path);
-      this.path.value = location.pathname;
+  navigate(path, replace = false) {
+    const prevPath = this.path.value;
+    if (path !== prevPath) {
+      if (!replace) history.pushState({}, null, path);
+      this.path.value = path;
       this.render(prevPath);
     }
   }
