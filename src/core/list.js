@@ -168,6 +168,7 @@ export class BetterList extends State {
       next.before(child);
       child.onAppend?.();
     }
+    this.trigger();
     return refIdx;
   }
 }
