@@ -164,7 +164,7 @@ export class BetterList extends State {
         next = next.nextSibling;
         count++;
       }
-      const child = callback(proxiedItem);
+      const child = callback(proxiedItem, refIdx);
       next.before(child);
       child.onAppend?.();
     }
