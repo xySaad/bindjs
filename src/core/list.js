@@ -145,6 +145,30 @@ export class BetterList extends State {
     }
     this.#endBatch();
   }
+  insert(item, index) {
+    const refIdx = ref(index);
+    const proxiedItem = this.#getProxy(item, refIdx);
+    this.value.splice(index, 0, proxiedItem);
+    this.#idx.splice(index, 0, refIdx);
+
+    for (let i = index + 1; i < this.#idx.length; i++) {
+      const refIdx = this.#idx[i];
+      refIdx((prev) => prev + 1);
+    }
+
+    for (const { start, callback } of this.#DOMLists) {
+      let next = start.nextSibling;
+      let count = 0;
+      while (count < index) {
+        next = next.nextSibling;
+        count++;
+      }
+      const child = callback(proxiedItem);
+      next.before(child);
+      child.onAppend?.();
+    }
+    return refIdx;
+  }
 }
 
 export class DerivedList extends BetterList {
@@ -199,33 +223,30 @@ export class DerivedList extends BetterList {
       }
     }
   }
-
   refine(newFilter) {
+    const original = this.#originalList.value;
     this.#filter = newFilter;
 
-    // Clear current filtered items efficiently
-    this.purge(() => true);
+    let position = 0;
 
-    // Reset mirrored ref index tracking
-    this.#mirroredRefIdx = Array(this.#originalList.value.length).fill(null);
+    for (let i = 0; i < original.length; i++) {
+      const item = original[i];
+      const shouldInclude = newFilter(item);
+      const wasIncluded = this.#mirroredRefIdx[i] !== null;
 
-    // Re-apply the new filter to original items
-    const filteredItems = [];
-    const srcIndexForItem = [];
-
-    this.#originalList.value.forEach((item, i) => {
-      if (this.#filter(item)) {
-        filteredItems.push(item);
-        srcIndexForItem.push(i);
+      if (shouldInclude) {
+        if (!wasIncluded) {
+          const ref = super.insert(item, position);
+          this.#mirroredRefIdx[i] = ref;
+        }
+        position++;
+      } else {
+        if (wasIncluded) {
+          const refIdx = this.#mirroredRefIdx[i];
+          super.remove(refIdx());
+          this.#mirroredRefIdx[i] = null;
+        }
       }
-    });
-
-    // Add filtered items back
-    const refIdxArray = super.push(...filteredItems);
-
-    refIdxArray.forEach((refIdx, i) => {
-      const srcIdx = srcIndexForItem[i];
-      this.#mirroredRefIdx[srcIdx] = refIdx;
-    });
+    }
   }
 }
