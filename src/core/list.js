@@ -50,6 +50,7 @@ export class BetterList extends State {
         this.trigger();
         for (const list of this.#computedLists) {
           list.reEvaluate(proxiedItem, refIdx());
+          list.trigger();
         }
         return true;
       },
