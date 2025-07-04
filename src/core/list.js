@@ -40,7 +40,7 @@ export class BetterList extends State {
   #getProxy(item, refIdx) {
     const isProxy = proxyCache.get(item);
 
-    if (isProxy) return item;
+    if (isProxy || typeof item !== "object") return item;
     const ctx = {};
 
     const proxiedItem = new Proxy(item, {
@@ -252,3 +252,7 @@ export class DerivedList extends BetterList {
     }
   }
 }
+
+export const list = (defaultValue) => {
+  return new BetterList(defaultValue);
+};
