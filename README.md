@@ -60,7 +60,7 @@ const {div} = html
 const counter = state(0);
 function App() {
   return div({
-    textContent: counter,
+    textContent: (w)=>`Counter ${w(counter)}`,
     onclick: () => counter.value++,
   });
 }
@@ -96,21 +96,16 @@ div({
 // The className will be "active" when isActive is true, otherwise "inactive"
 ```
 
-# List Rendering
-
-## List Rendering
+### List Rendering
 
 ```js
-import List from "rbind";
-const list = new List([1, 2]);
+import {list} from "rbind";
+const nums = list([1, 2]);
 
-list.push(3); // list is now [1, 2, 3]
-list.remove(2); // list is now [1, 2] remove the given index from the list
+nums.push(3); // list is now [1, 2, 3]
+nums.remove(2); // list is now [1, 2] remove the given index from the list
 ```
-
-## List Rendering
-
-### Creating a List
+## Creating a List
 
 ```js
 import { list } from "rbind";
@@ -120,7 +115,7 @@ const todos = list([
 ]);
 ```
 
-### Mapping to the DOM
+## Mapping to the DOM
 
 ```js
 import html from "rbind";
@@ -136,19 +131,19 @@ ul().add(
 );
 ```
 
-### Filtering a List
+## Filtering a List
 
 ```js
 const completed = todos.filter((t) => t.checked); // return a filtred list (completed) computed from todos
-completed.refine((t) => t.checked) // re-compute the filtered list with the new condition
+completed.refine((t) => t.checked); // re-compute the filtered list with the new condition
 ```
 
-### Mutating the List
+## Mutating the List
 
 ```js
 todos.push({ title: "Task 3", checked: false });
 todos.remove(0); // removes the first item
-todos.purge((c) => !c.checked); // clears the unchecked items
+todos.purge((item) => !item.checked); // clears the unchecked items
 ```
 
 > [xySaad](https://github.com/xySaad)
