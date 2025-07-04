@@ -1,13 +1,13 @@
-import html, { bindAs, A } from "rbind";
-import { clearAll, todosInView, todoList } from "./context/todos.js";
+import html, { bindAs, A, router } from "rbind";
+import { clearAll, displayedTodos, todoList } from "./context/todos.js";
 
 const { footer, li, span, ul, button } = html;
 
 export const Footer = () => {
-  const active = bindAs(todoList, "filter", (i) => !i.checked.value);
+  const active = bindAs(todoList, "filter", (i) => !i.checked);
 
   return footer({ className: "footer", "date-testid": "footer" }).add(
-    (w, c) => {      
+    (w, c) => {
       return span({
         className: "todo-count",
         textContent: [
@@ -17,14 +17,26 @@ export const Footer = () => {
       });
     },
     ul({ className: "filters", "data-testid": "footer-navigaion" }).add(
-      li().add(A("", "/", "All")),
-      li().add(A("", "/active", "Active")),
-      li().add(A("", "/completed", "Completed"))
+      li().add(A({ selected: (w) => w(router.path) === "/" }, "/", "All")),
+      li().add(
+        A(
+          { selected: (w) => w(router.path) === "/active" },
+          "/active",
+          "Active"
+        )
+      ),
+      li().add(
+        A(
+          { selected: (w) => w(router.path) === "/completed" },
+          "/completed",
+          "Completed"
+        )
+      )
     ),
     button({
       className: "clear-completed",
       textContent: "Clear completed",
-      onclick: () => clearAll(todosInView),
+      onclick: clearAll,
     })
   );
 };

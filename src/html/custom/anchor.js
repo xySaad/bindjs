@@ -3,7 +3,7 @@ import { router } from "../../router/router.js";
 
 export const A = (className, href, label) =>
   createElement("a", {
-    class: className,
+    className,
     href,
     textContent: label,
     onclick: (e) => {

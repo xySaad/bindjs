@@ -23,6 +23,8 @@ export class State {
   }
 }
 
+const contextMap = new WeakMap();
+
 export class List extends State {
   #parentNode = null;
   #component = null;
@@ -33,6 +35,7 @@ export class List extends State {
     this.value.forEach((_, i) => this.#idx.push(ref(i)));
   }
   push(pushable, shouldProxy = true) {
+    const ctx = {};
     const px = shouldProxy
       ? new Proxy(pushable, {
           get(target, prop) {
@@ -42,10 +45,16 @@ export class List extends State {
             target[prop] = newValue;
             this.trigger();
             for (const { list: subList } of this.#synced) subList.trigger();
+            const boundCtx = contextMap.get(target) || ctx;
+            if (prop in boundCtx && boundCtx[prop].value !== newValue) {
+              boundCtx[prop].value = newValue;
+            }
             return true;
           },
         })
       : pushable;
+
+    if (shouldProxy) contextMap.set(px, ctx);
 
     for (const { list: subList, filter } of this.#synced) {
       if (!filter || filter(px)) subList.push(px, false);
@@ -53,7 +62,7 @@ export class List extends State {
     const refIdx = ref(this.value.length);
     this.#idx.push(refIdx);
     if (this.#parentNode) {
-      const elm = this.#component(px, refIdx);
+      const elm = this.#component(px, refIdx, ctx);
       // use append instead of add to not trigger onAppend
       this.#parentNode.append(elm);
       elm.onAppend?.();
@@ -69,7 +78,7 @@ export class List extends State {
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
-    
+
     this.#parentNode?.children[index].remove();
     for (let i = index; i < this.#idx.length; i++) {
       const idxRef = this.#idx[i];
@@ -82,6 +91,15 @@ export class List extends State {
     derivedList.#synced.push({ list: this, filter });
     return derivedList;
   }
+  purge(predicate) {
+    for (let i = 0; i < this.value.length; ) {
+      if (predicate(this.value[i])) {
+        this.remove(i);
+      } else {
+        i++;
+      }
+    }
+  }
   // TODO: change name to map.
   // use comment/textNode closures (start/end) instead of relying on the parent
   // and create a list for each call of .map
@@ -92,9 +110,11 @@ export class List extends State {
     this.#parentNode = parentNode;
     this.#component = component;
     this.value.forEach((item, i) => {
-      const child = component(item, this.#idx[i])
+      const ctx = contextMap.get(item) || {};
+
+      const child = component(item, this.#idx[i], ctx);
       parentNode.append(child);
-      child.onAppend?.()
+      child.onAppend?.();
     });
   }
 }
