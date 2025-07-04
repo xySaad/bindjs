@@ -104,7 +104,7 @@ div({
 import List from "rbind";
 const list = new List([1, 2]);
 
-list.push(3, false); // list is now [1, 2, 3]
+list.push(3); // list is now [1, 2, 3]
 list.remove(2); // list is now [1, 2] remove the given index from the list
 ```
 
