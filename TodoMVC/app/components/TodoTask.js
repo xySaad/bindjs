@@ -11,16 +11,14 @@ export const TestTask = (item, idx) => {
   const isWritable = state(false);
 
   return li({
-    className: {
-      completed: checked,
-    },
+    class: ($) => $(checked) && "completed",
     "data-testid": "todo-item",
   }).add(
-    div({ className: "view" }).add((w, c) =>
+    div({ class: "view" }).add((w, c) =>
       c(() => w(isWritable))
         ? div({ class: "input-container" }).add(
             input({
-              className: "new-todo",
+              class: "new-todo",
               id: "todo-input",
               type: "text",
               "data-testid": "text-input",
@@ -41,7 +39,7 @@ export const TestTask = (item, idx) => {
           )
         : div().add(
             input({
-              className: "toggle",
+              class: "toggle",
               checked,
               type: "checkbox",
               "data-testid": "todo-item-toggle",
@@ -53,7 +51,7 @@ export const TestTask = (item, idx) => {
               ondblclick: () => (isWritable.value = true),
             }),
             button({
-              className: "destroy",
+              class: "destroy",
               "data-testid": "todo-item-button",
               onclick: () => {
                 const index = todoList.value.indexOf(item);

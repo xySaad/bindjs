@@ -6,9 +6,9 @@ const { div, input, label, main, ul } = html;
 const checkAllItems = () => {
   const checked = bindAs(displayedTodos, "every", (todo) => todo.checked);
 
-  return div({ className: "toggle-all-container" }).add(
+  return div({ class: "toggle-all-container" }).add(
     input({
-      className: "toggle-all",
+      class: "toggle-all",
       type: "checkbox",
       id: "toggle-all",
       "data-testid": "toggle-all",
@@ -16,7 +16,7 @@ const checkAllItems = () => {
       onclick: () => toggleAll(!checked.value),
     }),
     label({
-      className: "toggle-all-label",
+      class: "toggle-all-label",
       for: "toggle-all",
       textContent: "Toggle All Input",
     })
@@ -24,9 +24,10 @@ const checkAllItems = () => {
 };
 
 export const Main = () => {
-  return main({ className: "main", "data-testid": "main" }).add(
+  return main({ class: "main", "data-testid": "main" }).add(
     (w, c) => c(() => w(displayedTodos).length > 0) && checkAllItems(),
-    ul({ className: "todo-list", "data-testid": "todo-list" }).add(
+    // $if displayedTodos.length>0 $then checkAllItems()
+    ul({ class: "todo-list", "data-testid": "todo-list" }).add(
       displayedTodos.map(TestTask)
     )
   );

@@ -5,12 +5,12 @@ const { div, h1, header, input, label } = html;
 export const Header = () => {
   const title = state("");
 
-  return header({ className: "header", "date-testid": "header" }).add(
+  return header({ class: "header", "date-testid": "header" }).add(
     h1({ textContent: "todos" }),
-    div({ className: "input-container" }).add(
+    div({ class: "input-container" }).add(
       input({
         autofocus: true,
-        className: "new-todo",
+        class: "new-todo",
         id: "todo-input",
         type: "text",
         "data-testid": "text-input",
@@ -18,13 +18,13 @@ export const Header = () => {
         is: { value: title },
         onkeyup: (e) => {
           if (e.key == "Enter" && title.value.trim().length > 1) {
-            todoList.push({ title: title.value, checked: false  });
+            todoList.push({ title: title.value, checked: false });
             title.value = "";
           }
         },
       }),
       label({
-        className: "visually-hidden",
+        class: "visually-hidden",
         for: "todo-input",
         textContent: "New Todo Input",
       })

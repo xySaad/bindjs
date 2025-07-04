@@ -6,35 +6,33 @@ const { footer, li, span, ul, button } = html;
 export const Footer = () => {
   const active = bindAs(todoList, "filter", (i) => !i.checked);
 
-  return footer({ className: "footer", "date-testid": "footer" }).add(
-    (w, c) => {
-      return span({
-        className: "todo-count",
-        textContent: [
-          bindAs(active, "length"),
-          `${c(() => w(active).length === 1) ? "item" : "items"} left!`,
-        ],
-      });
-    },
-    ul({ className: "filters", "data-testid": "footer-navigaion" }).add(
-      li().add(A({ selected: (w) => w(router.path) === "/" }, "/", "All")),
+  return footer({ class: "footer", "date-testid": "footer" }).add(
+    span({
+      class: "todo-count",
+      textContent: ($) =>
+        `${$(active).length} ${
+          active.value.length === 1 ? "item" : "items"
+        } left!`,
+    }),
+    ul({ class: "filters", "data-testid": "footer-navigaion" }).add(
+      li().add(A(($) => $(router.path) === "/" && "selected", "/", "All")),
       li().add(
         A(
-          { selected: (w) => w(router.path) === "/active" },
+          ($) => $(router.path) === "/active" && "selected",
           "/active",
           "Active"
         )
       ),
       li().add(
         A(
-          { selected: (w) => w(router.path) === "/completed" },
+          ($) => $(router.path) === "/completed" && "selected",
           "/completed",
           "Completed"
         )
       )
     ),
     button({
-      className: "clear-completed",
+      class: "clear-completed",
       textContent: "Clear completed",
       onclick: clearAll,
     })

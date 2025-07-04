@@ -7,7 +7,7 @@ import html, { router } from "rbind";
 const { section } = html;
 export const App = () => {
   router.register(() => displayedTodos.refine(getFilterFunc()));
-  return section({ className: "todoapp", id: "root" }).add(
+  return section({ class: "todoapp", id: "root" }).add(
     Header(),
     Main(),
     (w, c) => c(() => w(todoList).length > 0) && Footer()
