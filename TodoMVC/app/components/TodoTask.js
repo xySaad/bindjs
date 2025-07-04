@@ -1,4 +1,4 @@
-import html, { bind, state } from "rbind";
+import html, { state } from "rbind";
 import { todoList } from "../context/todos.js";
 
 const { button, div, input, label, li } = html;

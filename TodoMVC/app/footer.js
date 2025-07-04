@@ -1,5 +1,5 @@
 import html, { bindAs, A, router } from "rbind";
-import { clearAll, displayedTodos, todoList } from "./context/todos.js";
+import { clearAll, todoList } from "./context/todos.js";
 
 const { footer, li, span, ul, button } = html;
 
