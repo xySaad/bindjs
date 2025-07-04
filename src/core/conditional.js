@@ -37,16 +37,16 @@ export const When = (effect) => {
       }
 
       if (!hasChanged) return;
-
-      const res = condition();
-      if (conditionResult === res) return;
-      conditionResult = res;
-
+      if (condition) {
+        const res = condition();
+        if (conditionResult === res) return;
+        conditionResult = res;
+      }
       const resolvedElement =
         effect((v) => v.value, registerCondition) ||
         document.createTextNode("");
       active?.replaceWith(resolvedElement);
-      resolvedElement.onAppend?.()
+      resolvedElement.onAppend?.();
       active = resolvedElement;
     };
   };

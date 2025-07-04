@@ -46,44 +46,11 @@ export const createElement = (tag, attributes = {}) => {
     if (value instanceof State) {
       value.register(() => elm.setAttr(key, value.value));
       elm.setAttr(key, value.value);
-    } else if (Array.isArray(value)) {
-      const temp = [];
-      for (const [i, subValue] of value.entries()) {
-        if (subValue instanceof State) {
-          temp[i] = subValue.value;
-          subValue.register(() => {
-            temp[i] = subValue.value;
-            // TODO: defer until exit of current call stack
-            // wait until all dependencies from states binded with..
-            // the current element are invoked then update DOM
-            elm.setAttr(key, temp.join(" "));
-          });
-        } else {
-          temp[i] = subValue;
-        }
-      }
-
-      elm.setAttr(key, temp.join(" "));
-    } else if (
-      (key === "class" || key === "className") &&
-      typeof value === "object" &&
-      value !== null
-    ) {
-      for (const className in value) {
-        const classValue = value[className];
-
-        if (classValue instanceof State) {
-          if (classValue.value) elm.classList.add(className);
-          classValue.register((v) => elm.classList.toggle(className, v));
-        } else if (typeof classValue === "function") {
-          When((w, registerCondition) => {
-            const result = registerCondition(() => classValue(w));
-            elm.classList.toggle(className, !!result);
-          });
-        } else if (classValue) {
-          elm.classList.add(className);
-        }
-      }
+    } else if (!key.startsWith("on") && typeof value === "function") {
+      When((watcher) => {
+        const result = value(watcher);
+        elm.setAttr(key, result || "");
+      });
     } else {
       elm.setAttr(key, value);
     }
