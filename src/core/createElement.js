@@ -1,5 +1,5 @@
 import { When } from "./conditional.js";
-import { List, State } from "./state.js";
+import { State } from "./state.js";
 
 export const bindProto = {
   add: function (...children) {
@@ -17,12 +17,6 @@ export const bindProto = {
         if (child.autofocus) child.focus();
       }
     };
-    return this;
-  },
-
-  bind: function (list, callback, filter) {
-    if (!(list instanceof List)) return;
-    list.bind(this, callback, filter);
     return this;
   },
 

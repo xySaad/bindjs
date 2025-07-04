@@ -1,7 +1,6 @@
-import { BetterList, router, state } from "rbind";
-import { ref } from "rbind";
+import { list, router } from "rbind";
 
-export const todoList = new BetterList([]);
+export const todoList = list([]);
 
 export const getFilterFunc = () => {
   switch (router.path.value) {

@@ -252,3 +252,7 @@ export class DerivedList extends BetterList {
     }
   }
 }
+
+export const list = (defaultValue) => {
+  return new BetterList(defaultValue);
+};
