@@ -7,9 +7,6 @@ export class Router {
     this.routes = new Map();
     this.path = state(location.pathname);
 
-    window.addEventListener("DOMContentLoaded", () => {
-      this.render();
-    });
     window.addEventListener("popstate", () => {
       this.navigate(location.pathname, true);
     });
@@ -35,6 +32,13 @@ export class Router {
 
   SetRoute(path, handler) {
     this.routes.set(path, handler);
+  }
+
+  setup(routes) {
+    for (const key in routes) {
+      this.routes.set(key, routes[key]);
+    }
+    this.render();
   }
 
   navigate(path, replace = false) {
