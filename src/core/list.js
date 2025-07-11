@@ -1,4 +1,4 @@
-import { state, State } from "../index.js";
+import { state, State } from "../core/state.js";
 import { ref } from "./reference.js";
 
 const proxyCache = new WeakMap();
