@@ -57,6 +57,13 @@ export const createElement = (tag, attributes = {}) => {
     value.register(() => (elm[key] = value.value));
   }
 
+  elm.oninput = (e) => {
+    for (const key in elm.is) {
+      const value = elm.is[key];
+      value.value = e.target[key];
+    }
+  };
+
   elm.onchange = (e) => {
     for (const key in elm.is) {
       const value = elm.is[key];
