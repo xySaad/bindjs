@@ -3,20 +3,24 @@ import { State } from "./state.js";
 
 export const bindProto = {
   add: function (...children) {
-    const resolvedChildren = [];
-    const frag = document.createDocumentFragment();
-    for (const child of children) {
-      const resolvedChild = typeof child === "function" ? When(child) : child;
-      resolvedChildren.push(resolvedChild);
-      frag.appendChild(resolvedChild);
-    }
-    this.onAppend = () => {
-      this.append(frag);
-      for (const child of resolvedChildren) {
-        child.onAppend?.();
-        if (child.autofocus) child.focus();
+    try {
+      const resolvedChildren = [];
+      const frag = document.createDocumentFragment();
+      for (const child of children) {
+        const resolvedChild = typeof child === "function" ? When(child) : child;
+        resolvedChildren.push(resolvedChild);
+        frag.appendChild(resolvedChild);
       }
-    };
+      this.onAppend = () => {
+        this.append(frag);
+        for (const child of resolvedChildren) {
+          child.onAppend?.();
+          if (child.autofocus) child.focus();
+        }
+      };
+    } catch (error) {
+      console.error(error);
+    }
     return this;
   },
 
