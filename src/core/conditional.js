@@ -4,7 +4,7 @@ export const When = (effect) => {
     ctx.set(state, {});
 
     const px =
-      typeof state.value === "object"
+      typeof state.value === "object" && state.value !== null
         ? new Proxy(state, {
             get(target, prop) {
               const v = target.value[prop];
