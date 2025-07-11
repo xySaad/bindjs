@@ -6,6 +6,6 @@
     "vite": "^7.0.0"
   },
   "dependencies": {
-    "rbind": "^0.0.18"
+    "rbind": "^0.0.19"
   }
 }
