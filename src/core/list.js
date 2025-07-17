@@ -7,8 +7,8 @@ export class BetterList extends State {
   #DOMLists = [];
   #idx = [];
   constructor(defaultValue) {
-    super(defaultValue);
-    this.#idx = defaultValue.map((_, i) => ref(i));
+    super([]);
+    this.push(...defaultValue);
   }
 
   #batching = false;
