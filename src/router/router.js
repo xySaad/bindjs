@@ -29,7 +29,9 @@ export class Router {
     }
     for (const dep of this.#dependecies) dep();
   }
-
+  /**
+   * @deprecated Use `setup()` instead for registering routes.
+   */
   SetRoute(path, handler) {
     this.routes.set(path, handler);
   }

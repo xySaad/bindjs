@@ -21,7 +21,7 @@ npm run dev
 
 ```js
 import { router } from "rbind";
-router.SetRoute("/", App); // mount App component to the path "/"
+router.setup({ "/": App, "/login": Login }); // mount App component to the path "/" and Login to "/login"
 ```
 
 ## Elements Creation:
@@ -99,12 +99,13 @@ div({
 ### List Rendering
 
 ```js
-import {list} from "rbind";
+import { list } from "rbind";
 const nums = list([1, 2]);
 
 nums.push(3); // list is now [1, 2, 3]
 nums.remove(2); // list is now [1, 2] remove the given index from the list
 ```
+
 ## Creating a List
 
 ```js
