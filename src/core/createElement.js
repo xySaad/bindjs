@@ -3,20 +3,24 @@ import { State } from "./state.js";
 
 export const bindProto = {
   add: function (...children) {
-    const resolvedChildren = [];
-    const frag = document.createDocumentFragment();
-    for (const child of children) {
-      const resolvedChild = typeof child === "function" ? When(child) : child;
-      resolvedChildren.push(resolvedChild);
-      frag.appendChild(resolvedChild);
-    }
-    this.onAppend = () => {
-      this.append(frag);
-      for (const child of resolvedChildren) {
-        child.onAppend?.();
-        if (child.autofocus) child.focus();
+    try {
+      const resolvedChildren = [];
+      const frag = document.createDocumentFragment();
+      for (const child of children) {
+        const resolvedChild = typeof child === "function" ? When(child) : child;
+        resolvedChildren.push(resolvedChild);
+        frag.appendChild(resolvedChild);
       }
-    };
+      this.onAppend = () => {
+        this.append(frag);
+        for (const child of resolvedChildren) {
+          child.onAppend?.();
+          if (child.autofocus) child.focus();
+        }
+      };
+    } catch (error) {
+      console.error(error);
+    }
     return this;
   },
 
@@ -56,6 +60,13 @@ export const createElement = (tag, attributes = {}) => {
     const value = elm.is[key];
     value.register(() => (elm[key] = value.value));
   }
+
+  elm.oninput = (e) => {
+    for (const key in elm.is) {
+      const value = elm.is[key];
+      value.value = e.target[key];
+    }
+  };
 
   elm.onchange = (e) => {
     for (const key in elm.is) {

@@ -1,4 +1,4 @@
-import { state, State } from "../index.js";
+import { state, State } from "../core/state.js";
 import { ref } from "./reference.js";
 
 const proxyCache = new WeakMap();
@@ -7,8 +7,8 @@ export class BetterList extends State {
   #DOMLists = [];
   #idx = [];
   constructor(defaultValue) {
-    super(defaultValue);
-    this.#idx = defaultValue.map((_, i) => ref(i));
+    super([]);
+    this.push(...defaultValue);
   }
 
   #batching = false;
