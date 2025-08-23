@@ -7,7 +7,7 @@ export const TestTask = (item, idx) => {
   // TODO: support compiled syntax (slighly better runtime performance)
   // @bind checked = item.checked
   // @bind checked from item
-  const checked = item.$.checked;
+  const checked = item.$.checked; //
   const isWritable = state(false);
 
   return li({
@@ -43,7 +43,7 @@ export const TestTask = (item, idx) => {
               checked,
               type: "checkbox",
               "data-testid": "todo-item-toggle",
-              is: { checked },
+              is: { checked }, // two way binding
             }),
             label({
               "data-testid": "todo-item-label",

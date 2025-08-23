@@ -156,7 +156,6 @@ export const createElement = (tagName, attributes = {}) => {
 };
 ```
 
-
 #### Binding variables to DOM elements
 
 There are several ways to bind a certain variable to an element or an attribute, ...
