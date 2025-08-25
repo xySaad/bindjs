@@ -25,7 +25,7 @@ export class Router {
       document.body.innerHTML = "";
       const elm = callback();
       document.body.append(elm);
-      elm.onAppend();
+      elm.mount();
     }
     for (const dep of this.#dependecies) dep();
   }
