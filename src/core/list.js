@@ -211,13 +211,52 @@ export class DerivedList extends BetterList {
     }
     this.#mirroredRefIdx[srcIdx] = refIdx;
   }
+  // vibe coded with Grok (i am lazy to review)
+  removeBySrcIndex(...indices) {
+    // Normalize indices: handle array or spread, remove duplicates, filter invalid, sort descending
+    const validIndices = Array.isArray(indices[0]) ? indices[0] : indices;
+    const indicesToRemove = [...new Set(validIndices)]
+      .filter(
+        (i) => Number.isInteger(i) && i >= 0 && i < this.#mirroredRefIdx.length
+      )
+      .sort((a, b) => b - a);
 
-  removeBySrcIndex(index) {
-    const refIdx = this.#mirroredRefIdx[index];
-    if (refIdx != null) {
-      this.remove(refIdx());
+    if (!indicesToRemove.length) return;
+
+    // Collect valid mirrored indices
+    const mirroredIndices = indicesToRemove
+      .map((index) => this.#mirroredRefIdx[index])
+      .filter((refIdx, i) => {
+        if (refIdx == null) {
+          console.warn(
+            `No refIdx at source index ${indicesToRemove[i]} in DerivedList`
+          );
+          return false;
+        }
+        return true;
+      })
+      .map((refIdx) => refIdx());
+
+    // Batch remove from mirroredRefIdx
+    for (const index of indicesToRemove) {
+      try {
+        this.#mirroredRefIdx.splice(index, 1);
+      } catch (e) {
+        console.error(
+          `Failed to splice index ${index} from mirroredRefIdx:`,
+          e
+        );
+      }
     }
-    this.#mirroredRefIdx.splice(index, 1);
+
+    // Remove from derived list
+    if (mirroredIndices.length) {
+      try {
+        this.remove(...mirroredIndices);
+      } catch (e) {
+        console.error(`Failed to remove indices from derived list:`, e);
+      }
+    }
   }
   reEvaluate(item, srcIdx) {
     if (!this.#filter(item)) {
