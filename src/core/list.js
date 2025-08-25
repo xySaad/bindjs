@@ -8,7 +8,9 @@ export class BetterList extends State {
   #idx = [];
   constructor(defaultValue) {
     super([]);
+    this.#batching = true;
     this.push(...defaultValue);
+    this.#batching = false;
   }
 
   #batching = false;
@@ -19,13 +21,14 @@ export class BetterList extends State {
       return;
     }
     super.trigger();
+    console.error("trigger ran");
   }
   batch(callback) {
     this.#batching = true;
     callback();
     this.#batching = false;
     if (this.#triggerRequested) {
-      super.trigger();
+      this.trigger();
       this.#triggerRequested = false;
     }
   }
@@ -40,6 +43,18 @@ export class BetterList extends State {
 
     if (isProxy || typeof item !== "object") return item;
     const ctx = {};
+    item.$ = new Proxy(
+      {},
+      {
+        get(_, prop) {
+          if (prop in ctx) return ctx[prop];
+          const st = state(proxiedItem[prop]);
+          st.register((v) => (proxiedItem[prop] = v));
+          ctx[prop] = st;
+          return st;
+        },
+      }
+    );
 
     const proxiedItem = new Proxy(item, {
       set: (target, prop, value) => {
@@ -53,18 +68,7 @@ export class BetterList extends State {
         return true;
       },
     });
-    proxiedItem.$ = new Proxy(
-      {},
-      {
-        get(_, prop) {
-          if (prop in ctx) return ctx[prop];
-          const st = state(proxiedItem[prop]);
-          st.register((v) => (proxiedItem[prop] = v));
-          ctx[prop] = st;
-          return st;
-        },
-      }
-    );
+
     proxyCache.set(proxiedItem, true);
 
     return proxiedItem;
@@ -106,9 +110,6 @@ export class BetterList extends State {
       newIdx.push(this.#idx[i]);
     }
 
-    this.value = newValue;
-    this.#idx = newIdx;
-
     // DOM
     for (const { children } of this.#DOMLists) {
       for (const idx of indices) {
@@ -127,7 +128,8 @@ export class BetterList extends State {
       list.removeBySrcIndex(...indices);
     }
 
-    this.trigger();
+    this.#idx = newIdx;
+    this.value = newValue; // runs trigger
   }
   map(callback) {
     const children = this.value.map((item, i) => callback(item, this.#idx[i]));
@@ -144,15 +146,13 @@ export class BetterList extends State {
     return frag;
   }
   purge(predicate) {
-    this.batch(() => {
-      const indices = [];
-      for (let i = 0; i < this.value.length; i++) {
-        if (predicate(this.value[i], i)) {
-          indices.push(i);
-        }
+    const indices = [];
+    for (let i = 0; i < this.value.length; i++) {
+      if (predicate(this.value[i], i)) {
+        indices.push(i);
       }
-      this.remove(...indices);
-    });
+    }
+    this.remove(...indices);
   }
   insert(item, index) {
     const refIdx = ref(index);
