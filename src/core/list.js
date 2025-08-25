@@ -93,20 +93,39 @@ export class BetterList extends State {
     return this.#idx.slice(start);
   }
 
-  remove(index) {
+  remove(...indices) {
+    indices = indices.sort((a, b) => a - b);
+    const removeSet = new Set(indices);
+    const newValue = [];
+    const newIdx = [];
+
+    for (let i = 0, j = 0; i < this.value.length; i++) {
+      if (removeSet.has(i)) continue;
+      newValue.push(this.value[i]);
+      this.#idx[i](j++);
+      newIdx.push(this.#idx[i]);
+    }
+
+    this.value = newValue;
+    this.#idx = newIdx;
+
+    // DOM
     for (const { children } of this.#DOMLists) {
-      children[index].remove();
-      children.splice(index, 1);
-      console.log(index);
-      console.log(...children);
+      for (const idx of indices) {
+        children[idx].remove();
+      }
+      const kept = [];
+      for (let i = 0; i < children.length; i++) {
+        if (!removeSet.has(i)) kept.push(children[i]);
+      }
+      children.length = 0;
+      children.push(...kept);
     }
-    this.value.splice(index, 1);
-    this.#idx.splice(index, 1);
-    for (let i = index; i < this.#idx.length; i++) {
-      const refIdx = this.#idx[i];
-      refIdx((prev) => prev - 1);
+
+    // computed lists
+    for (const list of this.#computedLists) {
+      list.removeBySrcIndex(...indices);
     }
-    for (const list of this.#computedLists) list.removeBySrcIndex(index);
 
     this.trigger();
   }
@@ -126,13 +145,13 @@ export class BetterList extends State {
   }
   purge(predicate) {
     this.batch(() => {
-      for (let i = 0; i < this.value.length; ) {
+      const indices = [];
+      for (let i = 0; i < this.value.length; i++) {
         if (predicate(this.value[i], i)) {
-          this.remove(i);
-        } else {
-          i++;
+          indices.push(i);
         }
       }
+      this.remove(...indices);
     });
   }
   insert(item, index) {
