@@ -20,11 +20,9 @@ export class BetterList extends State {
     }
     super.trigger();
   }
-  #beginBatch() {
+  batch(callback) {
     this.#batching = true;
-  }
-
-  #endBatch() {
+    callback();
     this.#batching = false;
     if (this.#triggerRequested) {
       super.trigger();
@@ -127,15 +125,15 @@ export class BetterList extends State {
     return frag;
   }
   purge(predicate) {
-    this.#beginBatch();
-    for (let i = 0; i < this.value.length; ) {
-      if (predicate(this.value[i], i)) {
-        this.remove(i);
-      } else {
-        i++;
+    this.batch(() => {
+      for (let i = 0; i < this.value.length; ) {
+        if (predicate(this.value[i], i)) {
+          this.remove(i);
+        } else {
+          i++;
+        }
       }
-    }
-    this.#endBatch();
+    });
   }
   insert(item, index) {
     const refIdx = ref(index);
@@ -148,9 +146,9 @@ export class BetterList extends State {
       refIdx((prev) => prev + 1);
     }
 
-    for (const { start, callback, children } of this.#DOMLists) {
+    for (const { callback, children, end } of this.#DOMLists) {
       const child = callback(proxiedItem, refIdx);
-      (children[index] || start).after(child);
+      (children[index] || end).before(child);
       children.splice(index, 0, child);
       child.mount();
     }
@@ -212,30 +210,32 @@ export class DerivedList extends BetterList {
     }
   }
   refine(newFilter) {
-    const original = this.#originalList.value;
-    this.#filter = newFilter;
+    this.batch(() => {
+      const original = this.#originalList.value;
+      this.#filter = newFilter;
 
-    let position = 0;
+      let position = 0;
 
-    for (let i = 0; i < original.length; i++) {
-      const item = original[i];
-      const shouldInclude = newFilter(item);
-      const wasIncluded = this.#mirroredRefIdx[i] !== null;
+      for (let i = 0; i < original.length; i++) {
+        const item = original[i];
+        const shouldInclude = newFilter(item);
+        const wasIncluded = this.#mirroredRefIdx[i] !== null;
 
-      if (shouldInclude) {
-        if (!wasIncluded) {
-          const ref = super.insert(item, position);
-          this.#mirroredRefIdx[i] = ref;
-        }
-        position++;
-      } else {
-        if (wasIncluded) {
-          const refIdx = this.#mirroredRefIdx[i];
-          super.remove(refIdx());
-          this.#mirroredRefIdx[i] = null;
+        if (shouldInclude) {
+          if (!wasIncluded) {
+            const ref = super.insert(item, position);
+            this.#mirroredRefIdx[i] = ref;
+          }
+          position++;
+        } else {
+          if (wasIncluded) {
+            const refIdx = this.#mirroredRefIdx[i];
+            super.remove(refIdx());
+            this.#mirroredRefIdx[i] = null;
+          }
         }
       }
-    }
+    });
   }
 }
 
