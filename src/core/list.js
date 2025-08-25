@@ -174,6 +174,22 @@ export class BetterList extends State {
     this.trigger();
     return refIdx;
   }
+  clear() {
+    for (const { children, start, end } of this.#DOMLists) {
+      const range = document.createRange();
+      range.setStartAfter(start);
+      range.setEndBefore(end);
+      range.deleteContents();
+      children.length = 0;
+    }
+
+    for (const list of this.#computedLists) {
+      list.clear();
+    }
+
+    this.value = [];
+    this.#idx = [];
+  }
 }
 
 export class DerivedList extends BetterList {
