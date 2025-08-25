@@ -55,7 +55,6 @@ export const TestTask = (item, idx) => {
               "data-testid": "todo-item-button",
               onclick: () => {
                 const index = todoList.value.indexOf(item);
-                console.log(todoList.value[idx()] === item);
                 todoList.remove(index);
               },
             })

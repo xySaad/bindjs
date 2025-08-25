@@ -72,37 +72,35 @@ export class BetterList extends State {
     return proxiedItem;
   }
   push(...items) {
-    const refIndices = [];
-    const children = Array(this.#DOMLists.length).fill(Array(items.length));
+    const start = this.#idx.length;
 
-    for (const [itemIdx, item] of items.entries()) {
+    for (const item of items) {
       const refIdx = ref(this.value.length);
       const proxiedItem = this.#getProxy(item, refIdx);
       this.value.push(proxiedItem);
-      refIndices.push(refIdx);
       this.#idx.push(refIdx);
-      for (const [listIdx, { callback }] of this.#DOMLists.entries()) {
-        children[listIdx][itemIdx] = callback(proxiedItem, refIdx);
-      }
+
       for (const list of this.#computedLists)
         list.pushFromSrc(proxiedItem, refIdx());
     }
-    for (const [listIdx, { end }] of this.#DOMLists.entries()) {
-      end.before(...children[listIdx]);
-      children[listIdx].forEach((child) => child.onAppend?.());
+
+    for (const { end, callback, children: oldChildren } of this.#DOMLists) {
+      const children = items.map(callback);
+      end.before(...children);
+      oldChildren.push(...children);
+      for (const child of children) child.mount();
     }
+
     this.trigger();
-    return refIndices;
+    return this.#idx.slice(start);
   }
+
   remove(index) {
-    for (const { start, end, callback } of this.#DOMLists) {
-      let next = start.nextSibling;
-      let count = 0;
-      while (count < index) {
-        next = next.nextSibling;
-        count++;
-      }
-      next.remove();
+    for (const { children } of this.#DOMLists) {
+      children[index].remove();
+      children.splice(index, 1);
+      console.log(index);
+      console.log(...children);
     }
     this.value.splice(index, 1);
     this.#idx.splice(index, 1);
@@ -115,23 +113,16 @@ export class BetterList extends State {
     this.trigger();
   }
   map(callback) {
+    const children = this.value.map((item, i) => callback(item, this.#idx[i]));
+
     const start = document.createTextNode("");
     const end = document.createTextNode("");
-    const frag = document.createDocumentFragment();
-    frag.append(start, end);
-    this.#DOMLists.push({ start, end, callback });
-    for (let i = 0; i < this.value.length; i++) {
-      const item = this.value[i];
-      end.before(callback(item, this.#idx[i]));
-    }
+    this.#DOMLists.push({ start, end, callback, children });
 
-    frag.onAppend = () => {
-      let next = start.nextSibling;
-      while (true) {
-        if (next === end) break;
-        next.onAppend?.();
-        next = next.nextSibling;
-      }
+    const frag = document.createDocumentFragment();
+    frag.append(start, ...children, end);
+    frag.mount = () => {
+      for (const child of children) child.mount();
     };
     return frag;
   }
@@ -157,16 +148,11 @@ export class BetterList extends State {
       refIdx((prev) => prev + 1);
     }
 
-    for (const { start, callback } of this.#DOMLists) {
-      let next = start.nextSibling;
-      let count = 0;
-      while (count < index) {
-        next = next.nextSibling;
-        count++;
-      }
+    for (const { start, callback, children } of this.#DOMLists) {
       const child = callback(proxiedItem, refIdx);
-      next.before(child);
-      child.onAppend?.();
+      (children[index] || start).after(child);
+      children.splice(index, 0, child);
+      child.mount();
     }
     this.trigger();
     return refIdx;
