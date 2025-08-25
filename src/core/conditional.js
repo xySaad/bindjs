@@ -47,7 +47,7 @@ export const When = (effect) => {
         effect((v) => v.value, registerCondition) ||
         document.createTextNode("");
       active?.replaceWith(resolvedElement);
-      resolvedElement.onAppend?.();
+      resolvedElement.mount?.(); // might be a textNode placeholder which doesn't have .mount
       active = resolvedElement;
     };
   };
