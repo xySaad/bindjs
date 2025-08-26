@@ -190,6 +190,30 @@ export class BetterList extends State {
     this.value = [];
     this.#idx = [];
   }
+  set(index, item) {
+    if (index < 0 || index >= this.value.length) {
+      throw new Error(`Index ${index} is out of bounds`);
+    }
+
+    const refIdx = this.#idx[index];
+    const proxiedItem = this.#getProxy(item, refIdx);
+    this.value[index] = proxiedItem;
+
+    for (const { callback, children, start, end } of this.#DOMLists) {
+      const oldChild = children[index];
+      const newChild = callback(proxiedItem, refIdx);
+      oldChild.replaceWith(newChild);
+      children[index] = newChild;
+      newChild.mount();
+    }
+
+    for (const list of this.#computedLists) {
+      list.reEvaluate(proxiedItem, refIdx());
+      list.trigger();
+    }
+
+    this.trigger();
+  }
 }
 
 export class DerivedList extends BetterList {
