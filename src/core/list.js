@@ -87,8 +87,10 @@ export class BetterList extends State {
     }
 
     for (const { end, callback, children: oldChildren } of this.#DOMLists) {
-      const children = items.map(callback);
-      end.before(...children);
+      const children = items.map((item, i) => callback(item, this.#idx[i]));
+      const frag = document.createDocumentFragment();
+      frag.append(...children);
+      end.before(frag);
       oldChildren.push(...children);
       for (const child of children) child.mount();
     }
