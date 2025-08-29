@@ -1,5 +1,5 @@
-BindJS in a lightweight JavaScript framework built by [xySaad](https://github.com/xySaad) as a mini-framework project, It uses Data binding for state managment, custom routing system, and conditional rendrening...
-It's main goal is to let the user write less code.
+BindJS in a lightweight JavaScript framework that uses data binding and fine-grained reactivity for state managment, custom routing system, and conditional rendrening...
+It's main goal is to let the user write less code, without the cost of performance.
 
 # Installation:
 
