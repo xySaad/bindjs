@@ -2,38 +2,37 @@ import { When } from "./conditional.js";
 import { State } from "./state.js";
 
 export const bindProto = {
+  // to skip setAttribute
+  is: {},
+  keydown: {},
+
+  childrenQueue: null,
   add: function (...children) {
-    try {
-      const resolvedChildren = [];
-      const frag = document.createDocumentFragment();
-      for (const child of children) {
-        const resolvedChild = typeof child === "function" ? When(child) : child;
-        resolvedChildren.push(resolvedChild);
-        frag.appendChild(resolvedChild);
-      }
-      this.onAppend = () => {
-        this.append(frag);
-        for (const child of resolvedChildren) {
-          child.onAppend?.();
-          if (child.autofocus) child.focus();
-        }
-      };
-    } catch (error) {
-      console.error(error);
-    }
+    this.childrenQueue = children.map((child) =>
+      typeof child === "function" ? When(child) : child
+    );
     return this;
   },
-
+  mount: function () {
+    if (!this.childrenQueue) return;
+    this.append(...this.childrenQueue);
+    for (const child of this.childrenQueue) {
+      child.mount?.(); // might be a textNode placeholder which doesn't have .mount
+      if (child.autofocus) child.focus();
+    }
+  },
   setAttr: function (key, value) {
-    if (key in this) {
+    if (!key.startsWith("on") && typeof value === "function") {
+      When((watcher) => {
+        const result = value(watcher);
+        this.setAttr(key, result);
+      });
+    } else if (key in this) {
       this[key] = value;
     } else {
       this.setAttribute(key, value);
     }
   },
-  // to skip setAttribute
-  is: {},
-  keydown: {},
 };
 
 export const createElement = (tag, attributes = {}) => {
@@ -44,11 +43,6 @@ export const createElement = (tag, attributes = {}) => {
     if (value instanceof State) {
       value.register(() => elm.setAttr(key, value.value));
       elm.setAttr(key, value.value);
-    } else if (!key.startsWith("on") && typeof value === "function") {
-      When((watcher) => {
-        const result = value(watcher);
-        elm.setAttr(key, result || "");
-      });
     } else {
       elm.setAttr(key, value);
     }
